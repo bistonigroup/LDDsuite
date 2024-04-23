@@ -45,7 +45,7 @@ structures along a reaction profile).
   - `{basename}.omega.cube`: the London dispersion density difference function in cube format.
 
 ### _PubQualityVMD.tcl_
-This script is designed mainly to visualize LD density (difference) function from a .cube file, but you can load an _.xyz_ file to visualize a molecule structure as well. The script modifies the VMD settings so that it can generate publication-quality images.
+This script is designed mainly to visualize LD density (difference) function from a _.cube_ file, but you can load an _.xyz_ file to visualize a molecule structure as well. The script modifies the VMD settings so that it can generate publication-quality images.
 Additionally, it includes a re-designed pick event feature that also displays atomic contributions to dispersion energy in the terminal, extracted from the _*atomwise.txt_ file.
 
 ## Prerequisites
