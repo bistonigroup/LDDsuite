@@ -1,7 +1,7 @@
-![Logo LDD Program Suite](./images/bistoniheader.png)
+![Logo LDD Suite](./images/bistoniheader.png)
 
 <h1 align='center'>
-London Dispersion Density (LDD) Program Suite
+London Dispersion Density (LDD) Suite
 </h1>
 
 [![Github](https://img.shields.io/badge/GitHub-bistonigroup-181717.svg?style=flat-square&logo=github)](https://github.com/bistonigroup)
@@ -10,7 +10,7 @@ London Dispersion Density (LDD) Program Suite
 [![Website](https://img.shields.io/badge/Bistoni-blue?style=flat-square&logo=wordpress&logoColor=white&label=Website&labelColor=grey)](https://giovannibistoni.wordpress.com/)
 
 
-The LDD program suite is designed to compute atomic contributions to the London dispersion energy, the London dispersion density function, and the London dispersion density difference function. It includes the following tools: _lddensityd4.py_, _lddensityd3.py_, and _lddensitydifference.py_, each utilizing different dispersion corrections or computational approaches.
+The LDD suite is designed to compute atomic contributions to the London dispersion energy, the London dispersion density function, and the London dispersion density difference function. It includes the following tools: _lddensityd4.py_, _lddensityd3.py_, and _lddensitydifference.py_, each utilizing different dispersion corrections or computational approaches.
 The suite includes a VMD (Visual Molecular Dynamics) script _PubQualityVMD.tcl_ to generate images suitable for scientific publications.
 
 ## Table of contents
@@ -87,9 +87,10 @@ When both a _.cube_ file and the respective _*atomwise.txt_ file are present in 
 
 > [!NOTE] 
 > Some functions within the script are commented out by default. However, if you are interested in exploring or utilizing these functions, you can easily uncomment the relevant parts of the script.
+> Auto color scaling is enabled by default.
 
 > [!TIP]
-> Use the _rotate_ and _scale_ commands in the _Rotation and Scaling_ section to display the molecule according to your preference.
+> Change the rotation angles (_rot_x_, _rot_y_, _rot_z_) and the moleculare size (_scale_val_) to display the molecule according to your preference.
  
 ## Arguments Description
 
@@ -118,13 +119,13 @@ The images displayed below are visual representations created using the _PubQual
 
 
 ## Credits
-If you use the LDD program suite in your research or any publication, please cite the author(s).
+If you use the LDD suite in your research or any publication, please cite the author(s).
 
 ## License
 Distributed under the MIT License. See _LICENSE_ for more information.
 
 ## Contact
-For general inquiries, feedback, or assistance with using the LDD program suite, please contact us at:
+For general inquiries, feedback, or assistance with using the LDD suite, please contact us at:
 
 Gianluca Regni - [_gianluca.regni@studenti.unipg.it_](mailto:gianluca.regni@studenti.unipg.it)  
 Lorenzo Baldinelli - [_lorenzo.baldinelli@studenti.unipg.it_](mailto:lorenzo.baldinelli@studenti.unipg.it)  
