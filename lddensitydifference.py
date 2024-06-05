@@ -164,7 +164,7 @@ if __name__ == "__main__":
     
     # Initialize command-line argument parser and define expected arguments
     parser = argparse.ArgumentParser(description="Compute the values of London dispersion density difference function")
-    parser.add_argument('basename', type=str, help='Base name for the input .xyz file')
+    parser.add_argument('basename', type=str, help='Base name for the input .atomwise.txt file')
     parser.add_argument('--npoints', type=int, default=80, help='Number of grid points for each dimension (default: 80)')
     parser.add_argument('--nprocs', type=int, default=1, help='Number of processors for parallel calculations (default: 1)')
     
