@@ -14,11 +14,11 @@ Input/Output:
            This contains the spatial coordinates of a chemical system in XYZ format and,
            as a 5th column, the difference between the atomic LD energy of each atom minus
            that obtained for a different molecular structure.  
-           For example, the atomic LD energies can be obtained using the lddensity.py tool.
+           For example, the atomic LD energies can be obtained using the lddensityd*.py tool.
            However, this tool can be used in principle in conjuction with any arbitrary atom-wise
            decomposition scheme.
 - Output : At the end of the calculation, one output file will be generated:
-    - ".omega.cube": The London dispersion density difference function in cube format.
+    - "{basename}.omega.cube": The London dispersion density difference function in cube format.
 
 Usage   : python3 lddensitydifference.py <basename> [--npoints NP] [--nprocs NPROCS]
 Example : python3 lddensitydifference.py water --npoints 80 --nprocs 2
@@ -89,11 +89,11 @@ def omega_comp(nproc, ANG_AU, xyzbox, x, y, z, atwdisp):
 
     Args:
         nproc (int): The number of processors to use for parallel calculations.
-        ANG_AU (float): The conversion factor from Angstroem to atomic units.
+        ANG_AU (float): The conversion factor from angstroems to atomic units.
         xyzbox (list): A list of 3D grid points for computing the omega function.
-        x (list): A list containing the x-coordinates of atoms in Angstroem.
-        y (list): A list containing the y-coordinates of atoms in Angstroem.
-        z (list): A list containing the z-coordinates of atoms in Angstroem.
+        x (list): A list containing the x-coordinates of atoms in angstroems.
+        y (list): A list containing the y-coordinates of atoms in angstroems.
+        z (list): A list containing the z-coordinates of atoms in angstroems.
         atwdisp (list): List of atomic-wise dispersion.
 
     Returns:
@@ -109,7 +109,7 @@ def omega_comp(nproc, ANG_AU, xyzbox, x, y, z, atwdisp):
 
 def output(basename, omegaintegral, atwdisptot):
     """
-    Prints analysis information
+    Prints a summary of the calculation.
 
     Args:
         basename (str): The base name of the molecule file.
@@ -143,28 +143,25 @@ if __name__ == "__main__":
     AU_ANG = 0.5291772083
 
     elements = [None,
-     "H", "He",
-     "Li", "Be",
-     "B", "C", "N", "O", "F", "Ne",
-     "Na", "Mg",
-     "Al", "Si", "P", "S", "Cl", "Ar",
-     "K", "Ca",
-     "Sc", "Ti", "V", "Cr", "Mn", "Fe", "Co", "Ni", "Cu", "Zn",
-     "Ga", "Ge", "As", "Se", "Br", "Kr",
-     "Rb", "Sr",
-     "Y", "Zr", "Nb", "Mo", "Tc", "Ru", "Rh", "Pd", "Ag", "Cd",
-     "In", "Sn", "Sb", "Te", "I", "Xe",
-     "Cs", "Ba",
-     "La", "Ce", "Pr", "Nd", "Pm", "Sm", "Eu", "Gd", "Tb", "Dy", "Ho", "Er", "Tm", "Yb",
-     "Lu", "Hf", "Ta", "W", "Re", "Os", "Ir", "Pt", "Au", "Hg",
-     "Tl", "Pb", "Bi", "Po", "At", "Rn",
-     "Fr", "Ra",
-     "Ac", "Th", "Pa", "U", "Np", "Pu", "Am", "Cm", "Bk", "Cf", "Es", "Fm", "Md", "No",
-     "Lr", "Rf", "Db", "Sg", "Bh", "Hs", "Mt", "Ds", "Rg", "Uub"]
+         "H", "He",
+         "Li", "Be", "B", "C", "N", "O", "F", "Ne",
+         "Na", "Mg", "Al", "Si", "P", "S", "Cl", "Ar",
+         "K", "Ca", "Sc", "Ti", "V", "Cr", "Mn", "Fe", "Co", "Ni", "Cu",
+         "Zn","Ga", "Ge", "As", "Se", "Br", "Kr",
+         "Rb", "Sr", "Y", "Zr", "Nb", "Mo", "Tc", "Ru", "Rh", "Pd", "Ag",
+         "Cd", "In", "Sn", "Sb", "Te", "I", "Xe",
+         "Cs", "Ba", "La", "Ce", "Pr", "Nd", "Pm", "Sm", "Eu", "Gd", "Tb",
+         "Dy", "Ho", "Er", "Tm", "Yb",
+         "Lu", "Hf", "Ta", "W", "Re", "Os", "Ir", "Pt", "Au", "Hg", "Tl",
+         "Pb", "Bi", "Po", "At", "Rn",
+         "Fr", "Ra", "Ac", "Th", "Pa", "U", "Np", "Pu", "Am", "Cm", "Bk",
+         "Cf", "Es", "Fm", "Md", "No",
+         "Lr", "Rf", "Db", "Sg", "Bh", "Hs", "Mt", "Ds", "Rg", "Cn", "Nh",
+         "Fl", "Mc", "Lv", "Ts", "Og"]
     
-    # Initialize command-line argument parser and define expected arguments
+    # Creation of command-line arguments
     parser = argparse.ArgumentParser(description="Compute the values of London dispersion density difference function")
-    parser.add_argument('basename', type=str, help='Base name for the input .atomwise.txt file')
+    parser.add_argument('basename', type=str, help='Base name for the input .xyz file')
     parser.add_argument('--npoints', type=int, default=80, help='Number of grid points for each dimension (default: 80)')
     parser.add_argument('--nprocs', type=int, default=1, help='Number of processors for parallel calculations (default: 1)')
     
@@ -205,9 +202,10 @@ if __name__ == "__main__":
     zmax = max(zat) * ANG_AU + EXTENT
 
 
+    # Generate the .omega.cube file to visualize the London dispersion density difference
     with open(f"{omegaout}", "w", encoding="utf-8") as fp:
         
-        fp.write(f"LD difference density ({npoints} grid points)\n")
+        fp.write(f"LD density difference ({npoints} grid points)\n")
         fp.write(f"input file: {basename}.atomwise.txt\n")
         fp.write(f"{len(at):5d}{xmin:12.6f}{ymin:12.6f}{zmin:12.6f}\n")
 
@@ -219,7 +217,7 @@ if __name__ == "__main__":
         zstep = (zmax - zmin) / float(npoints - 1)
         fp.write(f"{npoints:5d}{0:12.6f}{0:12.6f}{zstep:12.6f}\n")
 
-        # write the atomic number of each atom and its corresponding coordinates
+        # write the atomic number, nuclear charge and the corresponding coordinates for each atom
         for i, atom in enumerate(at):
             index = elements.index(atom)
             xi, yi, zi = xat[i] * ANG_AU, yat[i] * ANG_AU, zat[i] * ANG_AU
@@ -250,7 +248,7 @@ if __name__ == "__main__":
         # compute integral of LD density difference function
         omegaintegral = sum(omega) * xstep * ystep * zstep
         
-        output(basename, omegaintegral, atwdisptot)
+    output(basename, omegaintegral, atwdisptot)
 
 exetime = time.time() - start_time
 print(f"execution time: {exetime:10.5f} seconds\n")

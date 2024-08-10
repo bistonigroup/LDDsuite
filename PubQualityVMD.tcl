@@ -1,19 +1,20 @@
 # VMD Script for Publication-Quality Images
 # Author: Gianluca Regni
 # Copyright (c) 2024 Gianluca Regni
-# License: MIT (https://opensource.org/licenses/MIT)
-# Credits: Please cite the author and the References if you use or reference this program.
+# License: GPL-3.0 (https://www.gnu.org/licenses/)
+# Credits: Please cite the author(s) and the references if you use this program.
 
 # References:
 # VMD manual: https://www.ks.uiuc.edu/Research/vmd/current/ug.pdf
-# Shiv material settings adapted from: https://shivupa.github.io/blog/making-publication-quality-images-with-vmd/
+# Shiv material settings adapted from https://shivupa.github.io/blog/making-publication-quality-images-with-vmd/
+# Color scale bar adapted from https://github.com/thatchristoph/vmd-cvs-github/blob/master/plugins/colorscalebar/colorscalebar.tcl
 
 # Description:
-# This script is designed to visualize LD density (difference) function and generate publication-quality
-# images using VMD (Visual Molecular Dynamics). 
-# Additionally, it includes a re-designed pick event feature that also displays atomic contributions to dispersion
-# energy in the terminal, extracted from the atomwise.txt file.
-# It is designed to be used in combination with other programs of LD Density suite ####.
+# This script is designed to visualize LD density (difference) function.
+# It adjusts VMD settings to generate publication-quality images.
+# Additionally,  it includes an improved pick event feature that displays atomic contributions to dispersion
+# energy in the terminal, extracted from the _*atomwise.txt_ file.
+# It is designed to be used in combination with other programs of LDD suite (https://github.com/bistonigroup/LDDsuite).
 
 # Usage:
 # vmd -e PubQualityVMD.tcl 
@@ -22,16 +23,15 @@
 # Variables Declarations
 # ----------------------------------
 
-set file_name "water.80.b3-lyp.bj.d3omega.cube"; # file name
-
-set autoscale 0;          # use 1 to disable auto color scale
-set colorscale_min -0.0;  # min value for manual color scale
-set colorscale_max  0.0;  # max value for manual color scale
-set scale_val 1.0;        # change molecular size 
-set rot_y 0;              # rotation on y axe
-set rot_x 0;              # rotation on x axe
-set rot_z 0;              # rotation on z axe
-set render_mode 0;        # use 0 to disable rendering
+set file_name "water.xyz"; # file name
+set autoscale 0; # use 1 to disable auto color scale
+set colorscale_min 0.00; # min value for manual color scale
+set colorscale_max 0.00; # max value for manual color scale
+set scale_val 1.3; # increase molecular size 
+set rot_y 0;  # rotation on y axe
+set rot_x 0;  # rotation on x axe
+set rot_z 0;  # rotation on z axe
+set render_mode 0; # use 0 to disable rendering
 
 # ------------------------------------
 # File Names Assignation
@@ -80,7 +80,8 @@ proc write_edisp {args} {
     }
 }
 
-# Color Scale bar (adapted from Wuwei Liang (gtg088c@prism.gatech.edu) code)
+
+# Color Scale bar
 
 namespace eval ::ColorScaleBar:: {
   namespace export color_scale_bar delete_color_scale_bar
@@ -93,18 +94,18 @@ namespace eval ::ColorScaleBar:: {
   variable bar_mol       -1
   variable bar_text "Color Scale:"; # legend text for the colorbar
   variable text_show    "0"; # whether to show the legend.
-#  variable bar_orient   "0"; # orientation of the colorbar (vertical=0, horizontal=1)
-#  variable bar_text_pos "s"; # position of the colorbar (n,s,w,e)
-#  variable text_orient  "0"; # orientation of the text label to the bar.
-  variable lengthsetting    0.8
-  variable widthsetting     0.05
-  variable autoscale        0
-  variable fixedsetting     1
-  #variable minvalue         0
-  #variable maxvalue         100
-  variable axislabels       5
-  variable textcolor        white
-  variable fpformat         1      # 0=decimal, 1=scientific
+  # variable bar_orient   "0"; # orientation of the colorbar (vertical=0, horizontal=1)
+  # variable bar_text_pos "s"; # position of the colorbar (n,s,w,e)
+  # variable text_orient  "0"; # orientation of the text label to the bar.
+  variable lengthsetting  0.8
+  variable widthsetting   0.05
+  variable autoscale      0
+  variable fixedsetting   1
+  # variable minvalue     0
+  # variable maxvalue     100
+  variable axislabels     5
+  variable textcolor      white
+  variable fpformat       1      # 0=decimal, 1=scientific
 }
 
 package provide colorscalebar $ColorScaleBar::version
@@ -162,8 +163,8 @@ proc ::ColorScaleBar::color_scale_bar {{length 0.3} {width 0.05} {auto_scale $au
     set min [lindex $minmax 0]
     set max [lindex $minmax 1]
     # Output the min and max coordinates
-    puts "Min (Eh): $min"
-    puts "Max (Eh): $max"
+    puts "Min: $min"
+    puts "Max: $max"
   }
 
   # Convert Hartree to kcal/mol
@@ -290,8 +291,6 @@ mol new "${file_name}" type ${file_extension}
 # Display Settings
 display rendermode GLSL
 display projection Orthographic
-display resetview
-display resize 800 600
 display ambientocclusion on
 display shadows on
 display height 5
@@ -380,6 +379,6 @@ display update ui
 if {$render_mode} {
   render TachyonInternal ${file_name}.tga
   # Convert from tga to png (ImageMagick required)
-  # exec convert "${file_name}.tga" "${file_name}.png"
-  # exec rm "${file_name}.tga"
+  exec convert "${file_name}.tga" "${file_name}.png"
+  exec rm "${file_name}.tga"
 }

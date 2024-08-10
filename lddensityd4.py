@@ -14,11 +14,11 @@ Prerequisites:
 - Please cite the related papers of Prof. Grimme and coworkers
 
 Input/Output:
-- Input  : a "{basename}.xyz" file as input is required (coordinates specified in Angstroem).
+- Input  : a "{basename}.xyz" file as input is required (coordinates specified in angstroems).
 - Output : at the end of the calculation, three output files will be generated:
     - ".d4atomwise.txt" : a file where coordinates are accompanied by a column indicating the contribution to the London dispersion energy for each atom.
     - ".d4out.txt"      : the original DFT-D4 output (J. Chem. Phys. 147, 034112 (2017); DOI: 10.1063/1.4993215).
-    - ".d4omega.cube"   : a function of spatial coordinates, facilitating visualization and analysis of dispersion energy contributions.
+    - ".d4omega.cube"   : a file containing volumetric data to easily visualize the atomic dispersion energy contributions.
 
 Usage   : python3 lddensityd4.py <basename> [--npoints NP] [--func FUNC] [--charge CHARGE] [--s9 S9] [--nprocs NPROCS]
 Example : python3 lddensityd4.py water --npoints 80 --func b3-lyp --charge 0 --s9 1.0 --nprocs 2
@@ -26,7 +26,7 @@ Example : python3 lddensityd4.py water --npoints 80 --func b3-lyp --charge 0 --s
 Arguments Explanation:
 - basename : Base name for the input .xyz file. It's the only required argument without a default value.
 - npoints  : The number of grid points for each dimension. Optional, defaults to 80.
-- func     : Specifies the functional parameters used in the D4 dispersion calculation. Optional, defaults to 'b3-lyp'.
+- func     : Specifies the functional to be used in the calculation. Optional, defaults to 'b3-lyp'.
 - charge   : The overall charge of the molecule. Optional, defaults to 0.
 - s9       : Coefficient for ATM (Axilrod-Teller-Muto) three-body dispersion. To eliminate the three-body contribution, set this to 0. Optional, defaults to 1.0. 
 - nprocs   : The number of processors to use for parallel calculations. Optional, defaults to 1.
@@ -121,11 +121,11 @@ def omega_comp(nproc, ANG_AU, xyzbox, x, y, z, atwdisp):
 
     Args:
         nproc (int): The number of processors to use for parallel calculations.
-        ANG_AU (float): The conversion factor from Angstroem to atomic units.
+        ANG_AU (float): The conversion factor from angstroems to atomic units.
         xyzbox (list): A list of 3D grid points for computing the omega function.
-        x (list): A list containing the x-coordinates of atoms in Angstroem.
-        y (list): A list containing the y-coordinates of atoms in Angstroem.
-        z (list): A list containing the z-coordinates of atoms in Angstroem.
+        x (list): A list containing the x-coordinates of atoms in angstroems.
+        y (list): A list containing the y-coordinates of atoms in angstroems.
+        z (list): A list containing the z-coordinates of atoms in angstroems.
         atwdisp (list): List of atomic-wise dispersion.
 
     Returns:
@@ -141,7 +141,7 @@ def omega_comp(nproc, ANG_AU, xyzbox, x, y, z, atwdisp):
 
 def output(basename, func, charge, s9, Esyskcal, omegaintegral, atwdisptot):
     """
-    Prints DFT-D4 atom-wise analysis information for the given molecule.
+    Prints a summary of the calculation.
 
     Args:
         basename (str): The base name of the molecule file.
@@ -190,29 +190,26 @@ if __name__ == "__main__":
 
     elements = [None,
          "H", "He",
-         "Li", "Be",
-         "B", "C", "N", "O", "F", "Ne",
-         "Na", "Mg",
-         "Al", "Si", "P", "S", "Cl", "Ar",
-         "K", "Ca",
-         "Sc", "Ti", "V", "Cr", "Mn", "Fe", "Co", "Ni", "Cu", "Zn",
-         "Ga", "Ge", "As", "Se", "Br", "Kr",
-         "Rb", "Sr",
-         "Y", "Zr", "Nb", "Mo", "Tc", "Ru", "Rh", "Pd", "Ag", "Cd",
-         "In", "Sn", "Sb", "Te", "I", "Xe",
-         "Cs", "Ba",
-         "La", "Ce", "Pr", "Nd", "Pm", "Sm", "Eu", "Gd", "Tb", "Dy", "Ho", "Er", "Tm", "Yb",
-         "Lu", "Hf", "Ta", "W", "Re", "Os", "Ir", "Pt", "Au", "Hg",
-         "Tl", "Pb", "Bi", "Po", "At", "Rn",
-         "Fr", "Ra",
-         "Ac", "Th", "Pa", "U", "Np", "Pu", "Am", "Cm", "Bk", "Cf", "Es", "Fm", "Md", "No",
-         "Lr", "Rf", "Db", "Sg", "Bh", "Hs", "Mt", "Ds", "Rg", "Uub"]
+         "Li", "Be", "B", "C", "N", "O", "F", "Ne",
+         "Na", "Mg", "Al", "Si", "P", "S", "Cl", "Ar",
+         "K", "Ca", "Sc", "Ti", "V", "Cr", "Mn", "Fe", "Co", "Ni", "Cu",
+         "Zn","Ga", "Ge", "As", "Se", "Br", "Kr",
+         "Rb", "Sr", "Y", "Zr", "Nb", "Mo", "Tc", "Ru", "Rh", "Pd", "Ag",
+         "Cd", "In", "Sn", "Sb", "Te", "I", "Xe",
+         "Cs", "Ba", "La", "Ce", "Pr", "Nd", "Pm", "Sm", "Eu", "Gd", "Tb",
+         "Dy", "Ho", "Er", "Tm", "Yb",
+         "Lu", "Hf", "Ta", "W", "Re", "Os", "Ir", "Pt", "Au", "Hg", "Tl",
+         "Pb", "Bi", "Po", "At", "Rn",
+         "Fr", "Ra", "Ac", "Th", "Pa", "U", "Np", "Pu", "Am", "Cm", "Bk",
+         "Cf", "Es", "Fm", "Md", "No",
+         "Lr", "Rf", "Db", "Sg", "Bh", "Hs", "Mt", "Ds", "Rg", "Cn", "Nh",
+         "Fl", "Mc", "Lv", "Ts", "Og"]
     
-    # Initialize command-line argument parser and define expected arguments
-    parser = argparse.ArgumentParser(description="Compute atomic contributions to the London dispersion energy using DFT-D4")
+    # Creation of command-line arguments
+    parser = argparse.ArgumentParser(description="Compute atomic contributions to the London dispersion energy using D4 correction")
     parser.add_argument('basename', type=str, help='Base name for the input .xyz file')
     parser.add_argument('--npoints', type=int, default=80, help='Number of grid points for each dimension (default: 80)')
-    parser.add_argument('--func', type=str, default='b3-lyp', help='Functional parameters used in D4 dispersion calculation (default: b3-lyp)')
+    parser.add_argument('--func', type=str, default='b3-lyp', help='Functional to be used in the calculation (default: b3-lyp)')
     parser.add_argument('--charge', type=int, default=0, help='Molecule charge (default: 0)')
     parser.add_argument('--s9', type=float, default=0, help='Coefficient for ATM three-body dispersion (default: 0). Set 1 to include total three-body dispersion contribution.')
     parser.add_argument('--nprocs', type=int, default=1, help='Number of processors for parallel calculations (default: 1)')
@@ -283,7 +280,7 @@ if __name__ == "__main__":
                     else:
                         break
 
-    # Generate the atomwise txt file where the atomic contributions are listed
+    # Generate the .d4atomwise.txt file where the atomic contributions are listed
     atwdisptot = 0
     with open(f"{atw}", "w", encoding="utf-8") as pwout:
         pwout.write("analysis of atom-wise contributions (in kcal/mol)\n")
@@ -293,6 +290,7 @@ if __name__ == "__main__":
                         f"{z[el]:12.6f}{atwdisp_value:12.6f}\n")
             atwdisptot += atwdisp_value
 
+    # Generate the .d4omega.cube file to visualize the London dispersion density
     with open(f"{omegaout}", "w", encoding="utf-8") as fp:
 
         fp.write(f"LD density ({npoints} grid points)\n")
@@ -307,7 +305,7 @@ if __name__ == "__main__":
         zstep = (zmax - zmin) / float(npoints - 1)
         fp.write(f"{npoints:5d}{0:12.6f}{0:12.6f}{zstep:12.6f}\n")
 
-        # write the atomic number of each atom and its corresponding coordinates
+        # write the atomic number, nuclear charge and the corresponding coordinates for each atom
         for i, atom in enumerate(atoms):
             index = elements.index(atom)
             xi, yi, zi = x[i] * ANG_AU, y[i] * ANG_AU, z[i] * ANG_AU
@@ -338,7 +336,7 @@ if __name__ == "__main__":
         # calculate integral of LD density function
         omegaintegral = sum(omega) * xstep * ystep * zstep
    
-        output(basename, func, charge, s9, Esyskcal, omegaintegral, atwdisptot)
+    output(basename, func, charge, s9, Esyskcal, omegaintegral, atwdisptot)
 
 exetime = time.time() - start_time
 print(f"execution time: {exetime:10.5f} seconds\n")
