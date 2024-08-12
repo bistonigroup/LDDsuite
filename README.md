@@ -8,7 +8,7 @@ London Dispersion Density (LDD) Suite
 [![X (formerly Twitter) Follow](https://img.shields.io/twitter/follow/easyaspython?label=Follow&style=social)](https://x.com/BistoniGroup)
 [![Website](https://img.shields.io/badge/Giovanni%20Bistoni%20Group-blue?style=social&logo=wordpress&labelColor=grey&label=WordPress)](https://giovannibistoni.wordpress.com/)
 [![Python 3.x](https://img.shields.io/badge/3.x-blue?style=flat-square&logo=Python&logoColor=blue&label=Python&labelColor=grey)](https://www.python.org/download/releases/3.0/)
-[![License: MIT](https://img.shields.io/badge/MIT-blue?style=flat-square&label=License&labelColor=grey)](https://opensource.org/licenses/MIT)
+[![License: LGPL v3](https://img.shields.io/badge/License-LGPL%20v3-blue.svg?style=flat-square)](https://www.gnu.org/licenses/lgpl-3.0)
 
 The LDD suite is designed to compute atomic contributions to the London dispersion energy, the London dispersion density function, and the London dispersion density difference function. It includes the following tools: _lddensityd4.py_, _lddensityd3.py_, and _lddensitydifference.py_, each utilizing different dispersion corrections or computational approaches. The suite includes a Visual Molecular Dynamics (VMD) script, _PubQualityVMD.tcl_, which is used to generate images suitable for scientific publications and to visually analyze atomic contributions.
 ## Table of contents
