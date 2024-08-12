@@ -116,7 +116,7 @@ The images displayed below are different visual representations of a Benzene-Lit
 If you use the LDD suite in your research or any publication, please cite the author(s).
 
 ## License
-Distributed under GNU GPL v3 (_PubQualityVMD.tcl_) and MIT License (for all other components). See _LICENSEs_ for more information.
+Distributed under GNU Lesser General Public License. See _LICENSE_ for more information.
 
 ## Contact
 For general inquiries, feedback, or assistance with using the LDD suite, please contact us at:

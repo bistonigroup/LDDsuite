@@ -1,6 +1,6 @@
 """
 (c) 2024, Gianluca Regni, Lorenzo Baldinelli, Giovanni Bistoni
-License: MIT License
+License: LGPL-3.0
 Credits: If you use this code, please cite the work ###
 
 Description:
