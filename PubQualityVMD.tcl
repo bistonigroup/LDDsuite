@@ -293,6 +293,7 @@ display rendermode GLSL
 display projection Orthographic
 display ambientocclusion on
 display shadows on
+display depthcue off
 display height 5
 display resize 1600 1200
 display reposition 800 1600
