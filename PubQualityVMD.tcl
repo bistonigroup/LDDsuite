@@ -303,6 +303,9 @@ display reposition 800 1600
 # Set the background color to white
 color Display Background white
 
+# Axes (off / origin / lowerleft / lowerright / upperleft / upperright)
+axes location off 
+
 # Material Customization
 material add Shiv
 material change ambient Shiv 0.00
