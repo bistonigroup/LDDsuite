@@ -110,7 +110,7 @@ namespace eval ::ColorScaleBar:: {
 
 package provide colorscalebar $ColorScaleBar::version
 
-proc ::ColorScaleBar::color_scale_bar {{length 0.3} {width 0.05} {auto_scale $autoscale} {fixed 1} {label_num 1} {text 16} {fp_format 0} {x_pos 1.3} {y_pos 0.0} {replacebar 1} {molid top} {repid 0} {showlegend 0} {legend "Dispersion Color Scale:"}} {
+proc ::ColorScaleBar::color_scale_bar {{length 0.5} {width 0.05} {auto_scale $autoscale} {fixed 1} {label_num 2} {text 16} {fp_format 0} {x_pos 1.3} {y_pos 0.0} {replacebar 1} {molid top} {repid 0} {showlegend 0} {legend "Dispersion Color Scale:"}} {
   variable bar_mol
 
   set m $molid
@@ -216,10 +216,10 @@ proc ::ColorScaleBar::color_scale_bar {{length 0.3} {width 0.05} {auto_scale $au
   set uy [expr $start_y + $length + $bw]
   set bz [expr $use_z - 0.00001]
   
-  draw line "$lx $ly $bz" "$lx $uy $bz" width 2
-  draw line "$lx $uy $bz" "$rx $uy $bz" width 2
-  draw line "$rx $uy $bz" "$rx $ly $bz" width 2
-  draw line "$rx $ly $bz" "$lx $ly $bz" width 2
+  draw line "$lx $ly $bz" "$lx $uy $bz" width 1
+  #draw line "$lx $uy $bz" "$rx $uy $bz" width 1
+  draw line "$rx $uy $bz" "$rx $ly $bz" width 1
+  #draw line "$rx $ly $bz" "$lx $ly $bz" width 1
 
   # draw the color bar
   set mincolorid [colorinfo num] 
@@ -255,7 +255,7 @@ proc ::ColorScaleBar::color_scale_bar {{length 0.3} {width 0.05} {auto_scale $au
       set labeltxt [format "% #.3e"  $cur_text]
     }
     draw text  "$coord_x $coord_y $use_z" "$labeltxt"
-    draw line "[expr $use_x+$width] $coord_y $use_z" "[expr $use_x+(1.45*$width)] $coord_y $use_z" width 2
+    draw line "[expr $use_x+$width] $coord_y $use_z" "[expr $use_x+(1.45*$width)] $coord_y $use_z" width 1
   }
 
   if {$showlegend == 1} {
@@ -292,10 +292,9 @@ mol new "${file_name}" type ${file_extension}
 display rendermode GLSL
 display projection Orthographic
 display ambientocclusion on
+display aoambient 0.8
 display shadows on
-if {$file_extension eq "cube"} {
-    display depthcue off
-}
+display depthcue off
 display height 5
 display resize 1600 1200
 display reposition 800 1600
@@ -321,6 +320,7 @@ material change opacity Shiv 1
 color Element C gray
 
 mol delrep 0 top
+mol material Shiv
 mol addrep 0
 mol modcolor 0 0 Element
 mol modstyle 0 0 CPK 0.8 0.3 72 72
