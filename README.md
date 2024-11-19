@@ -108,7 +108,7 @@ Below is a detailed table of the arguments that can be used with our script. Eac
 The images displayed below are different visual representations of a Benzene-Lithium complex generated using the _PubQualityVMD.tcl_ script. On the left, you can see the London dispersion density (_cube_ file), while on the right the simple molecular structure (_xyz_ file). Regarding LDD, red indicates high dispersion contribution, while blue indicates low contribution.
 
 <p align="center">
-  <img src="./images/BenzLi_40_b3-lyp_0_abc1.0_d4omega.cube.png" alt="London dispersion density for Benzene-Li" width="400" style="margin-right: 100px;"/>
+  <img src="./images/benzli-d4.80.omega.cube.png" alt="London dispersion density for Benzene-Lithium" width="400" style="margin-right: 100px;"/>
   <img src="./images/BenzLi.xyz.png" alt="Water" width="400"/> 
 </p>
 
@@ -121,6 +121,6 @@ Distributed under GNU Lesser General Public License. See _LICENSE_ for more info
 ## Contact
 For general inquiries, feedback, or assistance with using the LDD suite, please contact us at:
 
-Gianluca Regni - [_gianluca.regni@studenti.unipg.it_](mailto:gianluca.regni@studenti.unipg.it)  
+Gianluca Regni - [_gianluca.regni@dottorandi.unipg.it_](mailto:gianluca.regni@dottorandi.unipg.it)  
 Lorenzo Baldinelli - [_lorenzo.baldinelli@studenti.unipg.it_](mailto:lorenzo.baldinelli@studenti.unipg.it)  
 Giovanni Bistoni - [_giovanni.bistoni@unipg.it_](mailto:giovanni.bistoni@unipg.it) 
