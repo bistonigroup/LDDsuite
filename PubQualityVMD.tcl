@@ -209,7 +209,7 @@ proc ::ColorScaleBar::color_scale_bar {{length 0.5} {width 0.05} {auto_scale $au
 
   # disable material properties for the color scale bar background
   # so that it looks truly black (no specular) when it's set black
-  set bw [expr $width * 0.05]
+  set bw [expr $width * 0.0001]
   set lx [expr $use_x             - $bw]
   set rx [expr $use_x   + $width  + $bw] 
   set ly [expr $start_y           - $bw]
