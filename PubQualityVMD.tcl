@@ -233,7 +233,7 @@ proc ::ColorScaleBar::color_scale_bar {{length 0.5} {width 0.05} {auto_scale $au
   }
 
   # draw the labels
-  set coord_x [expr (1.2*$width)+$use_x];
+  set coord_x [expr (2.0*$width)+$use_x];
   set step_size [expr $length / $label_num]
   set color_step [expr double($numscaleids)/$label_num]
   set value_step [expr ($max - $min ) / double ($label_num)]
@@ -246,7 +246,7 @@ proc ::ColorScaleBar::color_scale_bar {{length 0.5} {width 0.05} {auto_scale $au
     if { $fp_format == 0 } {
       # format the string in decimal notation
       # we save a spot for a leading '-' sign
-      set labeltxt [format "% 6.2f"  $cur_text]
+      set labeltxt [format "% 6.3f"  $cur_text]
     } else {
       # format the string in scientific notation
       # we save a spot for a leading '-' sign
@@ -293,10 +293,15 @@ display rendermode GLSL
 display projection Orthographic
 display ambientocclusion on
 display aoambient 0.8
+display aodirect 0.4
+if {$render_mode} {
+  display resize 7680 4320
+} else {
+  display resize 1600 1200
+}
 display shadows on
 display depthcue off
 display height 5
-display resize 1600 1200
 display reposition 800 1600
 
 # Set the background color to white
@@ -308,7 +313,7 @@ axes location off
 # Material Customization
 material add Shiv
 material change ambient Shiv 0.00
-material change diffuse Shiv 0.85
+material change diffuse Shiv 0.80
 material change specular Shiv 0.00
 material change shininess Shiv 0.00
 material change mirror Shiv 0.00
@@ -384,6 +389,7 @@ display update ui
 
 if {$render_mode} {
   render TachyonInternal ${file_name}.tga
+  display resize 1600 1200
   # Convert from tga to png (ImageMagick required)
   exec convert "${file_name}.tga" "${file_name}.png"
   exec rm "${file_name}.tga"
