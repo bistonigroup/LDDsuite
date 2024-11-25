@@ -313,7 +313,7 @@ axes location off
 # Material Customization
 material add Shiv
 material change ambient Shiv 0.00
-material change diffuse Shiv 0.80
+material change diffuse Shiv 0.70
 material change specular Shiv 0.00
 material change shininess Shiv 0.00
 material change mirror Shiv 0.00
