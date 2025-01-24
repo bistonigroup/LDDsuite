@@ -79,7 +79,7 @@ Additionally, it includes an improved pick event feature that displays atomic co
 
     <pre><code style="font-size: 13px;">vmd -e PubQualityVMD.tcl</code></pre>
 
-When a _cube_ file is loaaded, if the _*atomwise.txt_ file is present in the same folder, you can use the _pick_ feature in VMD (_Mouse_ > _Pick_) to visualize the dispersion energy of individual atoms upon selection.
+When a _cube_ file is loaded, if the _*atomwise.txt_ file is present in the same folder, you can use the _pick_ feature in VMD (_Mouse_ > _Pick_) to visualize the dispersion energy of individual atoms upon selection.
 
 
 > [!NOTE] 
