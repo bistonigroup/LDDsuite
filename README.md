@@ -90,6 +90,29 @@ When a _cube_ file is loaded, if the _*atomwise.txt_ file is present in the same
 > [!TIP]
 > Change the rotation angles (_rot_x_, _rot_y_, _rot_z_) and the moleculare size (_scale_val_) to display the molecule according to your preference.
  
+### CubeGenerator.py
+If you only need to generate the _.cube_ file, you can use the _CubeGenerator.py_ script. This script requires an _.xyz_ file with an additional column containing the atomic dispersion contributions in Hartree. The file should be named `{basename}.atomdisp.txt`.
+
+Below is an example of a `{basename}.atomdisp.txt` file for the $C_6H_6$–Li system:
+
+```
+#
+# atom, x, y, z, Edisp(hartree)
+C    -2.378672     1.005050   -0.079453   -2.126446
+C    -2.318663    -0.385217   -0.085888   -2.126909
+C    -1.085955    -1.028059   -0.147588   -2.126864
+C     0.086589    -0.280636   -0.203051   -2.126252
+C     0.026549     1.109641   -0.196866   -2.125673
+C    -1.206135     1.752463   -0.134993   -2.125819
+H    -3.337288     1.505059   -0.038209   -0.485212
+H    -3.230736    -0.966137   -0.050005   -0.485532
+H     0.937922     1.690612   -0.246784   -0.484627
+H    -1.253275     2.833395   -0.136867   -0.484729
+H    -1.039495    -2.108952   -0.159689   -0.485494
+H     1.044500    -0.780664   -0.258085   -0.485037
+Li   -1.018560     0.350445    2.545363   -3.699832
+```
+
 ## Arguments Description
 
 Below is a detailed table of the arguments that can be used with our script. Each entry provides you with the name of the argument, a brief description, information on whether the argument is optional, and the default value it takes if not specified by the user. This table is designed to help you quickly understand how to configure the script to meet your specific requirements.
@@ -122,5 +145,5 @@ Distributed under GNU Lesser General Public License. See _LICENSE_ for more info
 For general inquiries, feedback, or assistance with using the LDD suite, please contact us at:
 
 Gianluca Regni - [_gianluca.regni@dottorandi.unipg.it_](mailto:gianluca.regni@dottorandi.unipg.it)  
-Lorenzo Baldinelli - [_lorenzo.baldinelli@studenti.unipg.it_](mailto:lorenzo.baldinelli@studenti.unipg.it)  
+Lorenzo Baldinelli - [_lorenzo.baldinelli@dottorandi.unipg.it_](mailto:lorenzo.baldinelli@dottorandi.unipg.it)  
 Giovanni Bistoni - [_giovanni.bistoni@unipg.it_](mailto:giovanni.bistoni@unipg.it) 
