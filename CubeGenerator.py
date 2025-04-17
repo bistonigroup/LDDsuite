@@ -10,7 +10,7 @@ Prerequisites:
 - Python 3.x with standard libraries.
 
 Input/Output:
-- Input  : an xyz file with an additional column with the respective atomic contribution in hartree, named "{basename}.atomdisp.txt" (coordinates in angstroems).
+- Input  : an xyz file with an additional column with the respective atomic contribution in hartree, named "{basename}.atomwise.txt" (coordinates in angstroems).
 - Output : the .cube file
 
 Usage   : python3 CubeGenerator.py <basename> [--npoints NP]  [--nprocs NPROCS]
@@ -28,7 +28,7 @@ def read_xyzdisp(xyzdisp):
     Reads geometric coordinates and the atomic contribution/dispersion
     
     Args:
-        xyz (str): The path of the .atomdisp.txt file to read.
+        xyz (str): The path of the .atomwise.txt file to read.
     
     Returns:
         atoms (list): A list containing the atomic symbols.
@@ -170,7 +170,7 @@ if __name__ == "__main__":
        
     # Initialize command-line argument parser and define expected arguments
     parser = argparse.ArgumentParser(description="Generator of .cube file, provide the xyz file with the dispersion associated with the atoms next to it")
-    parser.add_argument('basename', type=str, help='Base name for the input atomdisp.txt file')
+    parser.add_argument('basename', type=str, help='Base name for the input atomwise.txt file')
     parser.add_argument('--npoints', type=int, default=80, help='Number of grid points for each dimension (default: 80)')
     parser.add_argument('--nprocs', type=int, default=1, help='Number of processors for parallel calculations (default: 1)')
     
@@ -182,11 +182,11 @@ if __name__ == "__main__":
     nproc = args.nprocs
     
     # Construct file names
-    xyzdisp = f"{basename}.atomdisp.txt"
+    xyzdisp = f"{basename}.atomwise.txt"
     omegaout = f"{basename}.{npoints}.omega.cube"
     
     if not os.path.isfile(xyzdisp):
-        sys.exit("Error: could not find the .atomdisp.txt file")
+        sys.exit("Error: could not find the .atomwise.txt file")
         
     atoms, x, y, z, natoms, atwdisp = read_xyzdisp(xyzdisp)
     
@@ -201,7 +201,7 @@ if __name__ == "__main__":
     with open(f"{omegaout}", "w", encoding="utf-8") as fp:
 
         fp.write(f"LD density ({npoints} grid points)\n")
-        fp.write(f"input file: {basename}.atomdisp.txt\n")
+        fp.write(f"input file: {basename}.atomwise.txt\n")
         fp.write(f"{len(atoms):5d}{xmin:12.6f}{ymin:12.6f}{zmin:12.6f}\n")
 
         # calculate step sizes for each dimension

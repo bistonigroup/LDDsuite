@@ -91,9 +91,9 @@ When a _cube_ file is loaded, if the _*atomwise.txt_ file is present in the same
 > Change the rotation angles (_rot_x_, _rot_y_, _rot_z_) and the moleculare size (_scale_val_) to display the molecule according to your preference.
  
 ### CubeGenerator.py
-If you only need to generate the _.cube_ file, you can use the _CubeGenerator.py_ script. This script requires an _.xyz_ file with an additional column containing the atomic dispersion contributions in Hartree. The file should be named `{basename}.atomdisp.txt`.
+If you only need to generate the _.cube_ file, you can use the _CubeGenerator.py_ script. This script requires an _.xyz_ file with an additional column containing the atomic dispersion contributions in Hartree. The file should be named `{basename}.atomwise.txt`.
 
-Below is an example of a `{basename}.atomdisp.txt` file for the $C_6H_6$–Li system:
+Below is an example of a `{basename}.atomwise.txt` file for the $C_6H_6$–Li system:
 
 ```
 #
