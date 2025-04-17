@@ -295,7 +295,7 @@ display ambientocclusion on
 display aoambient 0.8
 display aodirect 0.4
 if {$render_mode} {
-  display resize 7680 4320
+  display resize 3200 2400
 } else {
   display resize 1600 1200
 }
