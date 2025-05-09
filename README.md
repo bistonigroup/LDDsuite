@@ -10,7 +10,7 @@ London Dispersion Density (LDD) Suite
 [![Python 3.x](https://img.shields.io/badge/3.x-blue?style=flat-square&logo=Python&logoColor=blue&label=Python&labelColor=grey)](https://www.python.org/download/releases/3.0/)
 [![License: LGPL v3](https://img.shields.io/badge/License-LGPL%20v3-blue.svg?style=flat-square)](https://www.gnu.org/licenses/lgpl-3.0)
 
-The LDD suite is designed to compute atomic contributions to the London dispersion energy, the London dispersion density function, and the London dispersion density difference function. It includes the following tools: _lddensityd4.py_, _lddensityd3.py_, and _lddensitydifference.py_, each utilizing different dispersion corrections or computational approaches. The suite includes a Visual Molecular Dynamics (VMD) script, _PubQualityVMD.tcl_, which is used to generate images suitable for scientific publications and to visually analyze atomic contributions.
+The LDD suite is designed to compute atomic contributions to the London dispersion energy, the London dispersion density function, and the London dispersion density difference function. It includes the following tools: `lddensityd4.py`, `lddensityd3.py`, and `lddensitydifference.py`, each utilizing different dispersion corrections or computational approaches. The suite includes a Visual Molecular Dynamics (VMD) script, `PubQualityVMD.tcl`, which is used to generate images suitable for scientific publications and to visually analyze atomic contributions.
 ## Table of contents
 - [ Tools Description ](#tools-description)
 - [ Prerequisites ](#prerequisites)
@@ -46,9 +46,9 @@ This script is designed mainly to visualize LD density (difference) function fro
 Additionally, it includes an improved pick event feature that displays atomic contributions to dispersion energy in the terminal, extracted from the _*atomwise.txt_ file.
 
 ## Prerequisites
-- For _lddensityd4.py_ and _lddensityd3.py_, ensure that _xyz_ file and the respective DFT-D3 or DFT-D4 executable are in the current path. The executable can be downloaded from the [official website](https://www.chemie.uni-bonn.de/grimme/de/software).
-- For _lddensitydifference.py_, ensure `{basename}.atomwise.txt` is in the current path.
-- To use _PubQualityVMD.tcl_ you must have VMD installed on your computer. VMD can be downloaded from the [official website](https://www.ks.uiuc.edu/Research/vmd/).
+- For `lddensityd4.py` and `lddensityd3.py`, ensure that _xyz_ file and the respective DFT-D3 or DFT-D4 executable are in the current path. The executable can be downloaded from the [official website](https://www.chemie.uni-bonn.de/grimme/de/software).
+- For `lddensitydifference.py`, ensure `{basename}.atomwise.txt` is in the current path.
+- To use `PubQualityVMD.tcl` you must have VMD installed on your computer. VMD can be downloaded from the [official website](https://www.ks.uiuc.edu/Research/vmd/).
 - Python 3.x with standard libraries.
 
 ## Usage
@@ -57,20 +57,20 @@ Additionally, it includes an improved pick event feature that displays atomic co
 
 1. Ensure `{basename}.xyz` file is at the current path.
 2. Run the script:
-- For _lddensityd3.py_:
+- For `lddensityd3.py`:
 
-    <pre><code style="font-size: 13px;">python3 lddensityd3.py &lt;basename&gt; [--npoints NP] [--func FUNC] [--damp DAMP] [--nprocs NPROCS]</code></pre>
+    <pre><code style="font-size: 13px;">python3 lddensityd3.py &lt;basename&gt; [-h] [--npoints NP] [--func FUNC] [--damp DAMP] [--nprocs NPROCS]</code></pre>
     
-- For _lddensityd4.py_:
+- For `lddensityd4.py`:
 
-  <pre><code style="font-size: 13px;">python3 lddensityd4.py &lt;basename&gt; [--npoints NP] [--func FUNC] [--charge CHARGE] [--s9 S9] [--nprocs NPROCS]</code></pre>
+  <pre><code style="font-size: 13px;">python3 lddensityd4.py &lt;basename&gt; [-h] [--npoints NP] [--func FUNC] [--charge CHARGE] [--s9 S9] [--nprocs NPROCS]</code></pre>
 
 ### _lddensitydifference.py_
 
 1. Ensure `{basename}.atomwise.txt` file is at the current path.
 2. Run the script:
 
-    <pre><code style="font-size: 13px;">python3 lddensitydifference.py &lt;basename&gt; [--npoints NP] [--nprocs NPROCS]</code></pre>
+    <pre><code style="font-size: 13px;">python3 lddensitydifference.py &lt;basename&gt; [-h] [--npoints NP] [--nprocs NPROCS]</code></pre>
 
 ### _PubQualityVMD.tcl_
 1. Ensure the input file (_cube_ or _xyz_) you wish to visualize is correctly named and located within an accessible directory (it's recommended to work within a single directory).
@@ -85,32 +85,37 @@ When a _cube_ file is loaded, if the _*atomwise.txt_ file is present in the same
 > [!NOTE] 
 > Some functions within the script are commented out by default for safety. However, if you are interested in exploring or utilizing these functions, you can easily uncomment them. \
 > Auto color scaling is enabled by default. \
-> Rendering is disabled by default. Set _render_mode_ to 1 to enable it ([ImageMagick](https://imagemagick.org/script/download.php) is required for converting to _png_)
+> Rendering is disabled by default. Set `render_mode` to `1` to enable it ([ImageMagick](https://imagemagick.org/script/download.php) is required for converting to _png_)
 
 > [!TIP]
-> Change the rotation angles (_rot_x_, _rot_y_, _rot_z_) and the moleculare size (_scale_val_) to display the molecule according to your preference.
+> Change the rotation angles (`rot_x`, `rot_y`, `rot_z`) and the moleculare size (`scale_val`) to display the molecule according to your preference.
+> For better visualization, set `autoscale` to `1` and choose symmetric values for `colorscale_min` and `colorscale_max`.
  
 ### CubeGenerator.py
-If you only need to generate the _.cube_ file, you can use the _CubeGenerator.py_ script. This script requires an _.xyz_ file with an additional column containing the atomic dispersion contributions in Hartree. The file should be named `{basename}.atomwise.txt`.
+If you only need to generate the _.cube_ file, you can use the `CubeGenerator.py` script. This script requires an _.xyz_ file with an additional column containing the atomic dispersion contributions in Hartree. The file should be named `{basename}.atomwise.txt`.
+
+Use the following command to run the script:
+
+<pre><code style="font-size: 13px;">python3 CubeGenerator.py &lt;basename&gt; [-h] [--npoints NPOINTS] [--nprocs NPROCS]</code></pre>
 
 Below is an example of a `{basename}.atomwise.txt` file for the $C_6H_6$–Li system:
 
 ```
 #
 # atom, x, y, z, Edisp(hartree)
-C    -2.380042576    1.005478061     -0.088512194    -0.000180037
+C    -2.380042576     1.005478061    -0.088512194    -0.000180037
 C    -2.320023031    -0.385743349    -0.095155325    -0.000180202
 C    -1.086520436    -1.029047176    -0.156679445    -0.000180256
-C    0.086838534     -0.281110527    -0.211595758    -0.000180108
-C    0.026802041     1.110119772     -0.205245356    -0.000179804
-C    -1.206705665    1.753411054     -0.143506979    -0.000179774
-H    -3.33788079     1.505384199     -0.029750793    -3.62525E-05
+C     0.086838534    -0.281110527    -0.211595758    -0.000180108
+C     0.026802041     1.110119772    -0.205245356    -0.000179804
+C    -1.206705665     1.753411054    -0.143506979    -0.000179774
+H    -3.33788079      1.505384199    -0.029750793    -3.62525E-05
 H    -3.231265174    -0.966821147    -0.042233802    -3.63261E-05
-H    0.939000704     1.691142987     -0.238205175    -3.61642E-05
-H    -1.252959109    2.834353251     -0.129152596    -3.61451E-05
+H     0.939000704     1.691142987    -0.238205175    -3.61642E-05
+H    -1.252959109     2.834353251    -0.129152596    -3.61451E-05
 H    -1.039324501    -2.110034967    -0.151765984    -3.63413E-05
-H    1.045670368     -0.781121982    -0.249470051    -3.62695E-05
-Li   -1.016809019    0.350990152     2.549158632     -0.00129768
+H     1.045670368    -0.781121982    -0.249470051    -3.62695E-05
+Li   -1.016809019     0.350990152     2.549158632    -0.00129768
 ```
 
 ## Arguments Description
@@ -128,7 +133,7 @@ Below is a detailed table of the arguments that can be used with our script. Eac
 | ***nprocs***  | Determines the number of processors used for parallel computation. | Yes | 1 |
 
 ## Example Images
-The images displayed below are different visual representations of a Benzene-Lithium complex generated using the _PubQualityVMD.tcl_ script. On the left, you can see the London dispersion density (_cube_ file), while on the right the simple molecular structure (_xyz_ file). Regarding LDD, red indicates high dispersion contribution, while blue indicates low contribution.
+The images displayed below are different visual representations of a Benzene-Lithium complex generated using the `PubQualityVMD.tcl` script. On the left, you can see the London dispersion density (_cube_ file), while on the right the simple molecular structure (_xyz_ file). Regarding LDD, red indicates high dispersion contribution, while blue indicates low contribution.
 
 <p align="center">
   <img src="./images/benzli-d4.80.omega.cube.png" alt="London dispersion density for Benzene-Lithium" width="400" style="margin-right: 100px;"/>
