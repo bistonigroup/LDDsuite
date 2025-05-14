@@ -141,7 +141,15 @@ The images displayed below are different visual representations of a Benzene-Lit
 </p>
 
 ## Credits
-If you use the LDD suite in your research or any publication, please cite the author(s).
+If you use the LDD suite in your research or any publication, please cite:
+- LDD suite GitHub Repository: \
+[https://github.com/bistonigroup/LDDsuite](https://github.com/bistonigroup/LDDsuite)
+
+- Main ADLD paper \
+[https://pubs.acs.org/doi/full/10.1021/acscentsci.5c00356](https://pubs.acs.org/doi/full/10.1021/acscentsci.5c00356)
+
+- Original paper \
+[https://pubs.acs.org/doi/abs/10.1021/acs.jctc.3c00977](https://pubs.acs.org/doi/abs/10.1021/acs.jctc.3c00977)
 
 ## License
 Distributed under GNU Lesser General Public License. See _LICENSE_ for more information.
