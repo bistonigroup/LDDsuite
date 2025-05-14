@@ -98,7 +98,7 @@ Use the following command to run the script:
 
 <pre><code style="font-size: 13px;">python3 CubeGenerator.py &lt;basename&gt; [-h] [--npoints NPOINTS] [--nprocs NPROCS]</code></pre>
 
-Below is an example of a `{basename}.atomwise.txt` file for the $C_6H_6$–Li system:
+Below is an example of a `{basename}.atomwise.txt` file for the $C_6H_6–Li$ system:
 
 ```
 #
