@@ -74,7 +74,7 @@ proc write_edisp {args} {
         if {$atom_ID == $vmd_pick_atom} {
             puts "You have selected atom $atomName (ID: $atom_ID)"
             puts "Coordinates:  x = $x,  y = $y,  z = $z"
-            puts "Dispersion energy (kcal/mol): $edisp"
+            puts "Dispersion energy: $edisp"
             break
         }
     }
