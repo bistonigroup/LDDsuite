@@ -52,7 +52,7 @@ def read_xyzdisp(xyzdisp):
             x.append(float(data[1]))
             y.append(float(data[2]))
             z.append(float(data[3]))
-            atwdisp.append(float(data[4])*627.503)
+            atwdisp.append(float(data[4])*627.5)
             nat = len(atoms)
     atwdisptot = sum(atwdisp)
     print("Total atom-wise contribution:".ljust(40) + f"{atwdisptot:10.3f} kcal/mol")
