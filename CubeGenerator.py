@@ -100,7 +100,7 @@ def omega_comp_wrapper(args):
     """
     boxpt, xyzcoord_au, atwdisp = args
     omegaval, ith = 0.0, 0
-    a = 0.3
+    a = 0.5
     norm = (1.0 / (math.pi / a)) ** 1.5
     for syspt in xyzcoord_au:
         rbox_rith = (boxpt[0] - syspt[0]) ** 2 + \
