@@ -297,7 +297,7 @@ display aodirect 0.4
 if {$render_mode} {
   display resize 3200 2400
 } else {
-  display resize 1600 1200
+  display resize 800 400
 }
 display shadows on
 display depthcue off
