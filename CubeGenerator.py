@@ -1,6 +1,6 @@
 """
 (c) 2024, Gianluca Regni
-License: LGPL-3.0
+License: LGPL-3.0 with restriction (see LICENSE)
 Credits: If you use this code, please cite the the author(s)
 
 Description:

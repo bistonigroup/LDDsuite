@@ -1,11 +1,11 @@
 """
 (c) 2024, Gianluca Regni, Lorenzo Baldinelli, Filippo De Angelis, Giovanni Bistoni
-License: LGPL-3.0
-Credits: If you use this code, please cite the work ###
+License: LGPL-3.0 with restriction (see LICENSE)
+Credits: If you use this code, please cite the work(s) DOI: 10.1021/acs.jctc.3c00977; DOI: 10.1021/acscentsci.5c00356 
 
 Description:
 This script computes the atomic contributions to the London dispersion energy as well as the London
-dispersion density function based on the D3 dispersion correction, as described in Ref. ####
+dispersion density function based on the D3 dispersion correction, as described in Ref. J. Chem. Theory Comput. 2024, 20, 5, 1923–1931; ACS Cent. Sci. 2025, 11, 6, 890–898
 
 Prerequisites:
 - Ensure the DFT-D3 executable is available at at the specified path (currently, PATHD3 = "./dftd3").

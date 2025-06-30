@@ -1,7 +1,7 @@
 # VMD Script for Publication-Quality Images
 # Author: Gianluca Regni
 # Copyright (c) 2024 Gianluca Regni
-# License: LGPL-3.0
+# License: LGPL-3.0 with restriction (see LICENSE)
 # Credits: Please cite the author(s) and the references if you use this program.
 
 # References:
