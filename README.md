@@ -52,8 +52,7 @@ Script designed to visualize LD density function from a `.cube` file, adjusting 
 - Python 3.x with standard libraries.
 - For `lddensity.py`, ensure that `.xyz` file and the respective DFT-D3 or DFT-D4 executable are in the current path. The executable can be downloaded from the [official website](https://www.chemie.uni-bonn.de/grimme/de/software).
 - For London dispersion density difference ensure `{basename}.atomwise.txt` is in the current path. See [Dispersion Density Difference](#dispersion-density-difference) section for more information.
-- To use `PubQualityVMD.tcl` you must have VMD installed on your computer. VMD can be downloaded from the [official website](https://www.ks.uiuc.edu/Research/vmd/).
-- VMD installed for running PubQualityVMD.tcl ([download](https://www.ks.uiuc.edu/Development/Download/download.cgi?PackageName=VMD)).
+- VMD must be installed for running `PubQualityVMD.tcl` ([download](https://www.ks.uiuc.edu/Development/Download/download.cgi?PackageName=VMD)).
 
 # Usage
 
