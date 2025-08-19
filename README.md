@@ -25,7 +25,7 @@ The **LDD suite**  computes atomic contributions to the London dispersion energy
 - [ Renderings ](#renderings)
 - [ Credits ](#credits)
 - [ License ](#license)
-- [ Contact ](#contact)
+- [ Contacts ](#contacts)
 
 # Tools Description
 
@@ -158,7 +158,7 @@ If you use the LDD suite in your research or any publication, please cite:
 # License
 Distributed under GNU Lesser General Public License with restrictions. See _LICENSE_ for more information.
 
-# Contact
+# Contacts
 For general inquiries, feedback, or assistance with using the LDD suite, please contact us at:
  
 [Gianluca Regni](https://scholar.google.com/citations?user=oHEU9VYAAAAJ&hl=it&oi=ao) - [_gianluca.regni@dottorandi.unipg.it_](mailto:gianluca.regni@dottorandi.unipg.it) \
