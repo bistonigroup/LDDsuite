@@ -40,10 +40,9 @@ Python script to compute atomic contributions to the London dispersion energy an
   - `.d3omega.cube` or `.d4omega.cube` : a `.cube` file that stores volumetric data of the LDD function, which can be used to easily visualize atomic contributions to London dispersion.
 
 > [!NOTE]
-> If atomic contributions are computed or if you want to plot the dispersion difference density between two molecular systems,  
+> If atomic contributions are computed or if you want to plot the dispersion density difference between two molecular systems,  
 > you can use the script solely to generate the `.cube` file.  
-> In the latter case, first compute the atomic contributions for both systems, then build a new `{basename}.atomwise.txt` file  
-> containing the difference of the atomic contributions between the two structures.  
+> In the latter case, first compute the atomic contributions for both systems, then build a new `{basename}.atomwise.txt` file containing the difference of the atomic contributions between the two structures.  
 > See [Generate Only the Cube File](#generate-only-the-cube-file) for more information.
 
 ## PubQualityVMD.tcl
