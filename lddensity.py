@@ -265,7 +265,7 @@ if __name__ == "__main__":
     parser.add_argument('--func',    type=str,   default='b3-lyp', help='Functional to be used in the calculation (default: b3-lyp)')
     parser.add_argument('--damp',    type=str,   default='bj',     help='Damping function to be used in calculation (default: bj)')
     parser.add_argument('--charge',  type=int,   default=0,        help='Molecule charge for D4 (default: 0)')
-    parser.add_argument('--s9',      type=float, default=0,        help='Coefficient for ATM three-body dispersion for D4 (default: 0). Set 1 or 0 to include or not the three-body contribution in D3.')
+    parser.add_argument('--s9',      type=float, default=0,        help='Coefficient for ATM three-body dispersion for D4 (default: 0). Set 1 or 0 to include or not the three-body contribution.')
     parser.add_argument('--nprocs',  type=int,   default=1,        help='Number of processors for parallel calculations (default: 1)')
     
     parser.add_argument('--onlycube', action='store_true', help='If set, generate only the .cube file. Note that {basename}.atomwise.txt is the input file in this case.')

@@ -92,7 +92,7 @@ Below is a detailed table of the arguments that can be used with our script. Eac
 | **func**   | Defines the functional to be used in the calculation. Refer to [DFT-D3](https://www.chemie.uni-bonn.de/grimme/de/software/dft-d3/man.pdf)/[DFT-D4](https://github.com/dftd4/dftd4/tree/main) manual for all available functionals. | Yes | `b3-lyp` |
 | **damp**    | Specifies the damping function to be used in the D3 calculation, refer to [DT-D3 manual](https://www.chemie.uni-bonn.de/grimme/de/software/dft-d3/man.pdf) for all available damping functions. | Yes | `bj` |
 | **charge**  | Sets the overall charge of the molecule being analyzed in the D4 calculation. | Yes | 0 |
-| **s9**     | A coefficient that scale the ATM (Axilrod-Teller-Muto) term for three-body dispersion in the D4 calculation. Allows users to adjust the contribution of three-body interactions in the dispersion energy. Set to 0 to eliminate this contribution or 1 to include three-body in D3 | Yes | 0 |
+| **s9**     | A coefficient that scale the ATM (Axilrod-Teller-Muto) term for three-body dispersion in the D4 calculation. Allows users to adjust the contribution of three-body interactions in the dispersion energy. Set to 0 to eliminate this contribution or 1 to include three-body | Yes | 0 |
 | **nprocs**  | Determines the number of processors used for parallel computation. | Yes | 1 |
 | **onlycube**  | Generates only the `.cube` file. See [Generate Only the Cube File](#generate-only-the-cube-file) section | Yes | False |
 
