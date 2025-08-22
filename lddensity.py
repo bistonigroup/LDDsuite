@@ -202,9 +202,9 @@ def output(omegaintegral, atwdisptot, Esyskcal=None):
     """
     
     if not args.onlycube:
-        print("Total Dispersion Energy:".ljust(40) + f"{Esyskcal:10.3f} kcal/mol")
-    print("Total atom-wise contribution:".ljust(40) + f"{atwdisptot:10.3f} kcal/mol")
-    print("Integral of Omega Function:".ljust(40) + f"{omegaintegral:10.3f}")
+        print("Total Dispersion Energy:".ljust(40) + f"{Esyskcal:10.1f} kcal/mol")
+    print("Total atom-wise contribution:".ljust(40) + f"{atwdisptot:10.1f} kcal/mol")
+    print("Integral of Omega Function:".ljust(40) + f"{omegaintegral:10.1f}")
     
 def format_time(seconds):
     """
@@ -287,8 +287,12 @@ if __name__ == "__main__":
         abc = False
     else:
         abc = True
-    if d == 3 and (0.0 < s9 < 1.0):
-        print(f"WARNING: Requested D3 with a fractional s9. Three-body calculation will not be performed.")
+    # if d == 3 and (0.0 < s9 < 1.0):
+    #     print(f"WARNING: Requested D3 with a fractional s9. Three-body calculation will not be performed.")
+    #     abc = False
+    
+    if d == 3 and s9 != 0:
+        print(f"WARNING: Three-body calculation is not yet supported for D3.")
         abc = False
     
     if d == 4 and damp != "bj":
@@ -309,7 +313,7 @@ if __name__ == "__main__":
         
         # Settings summary  
         print("===SETTINGS SUMMARY===")
-        print(f"Input File: {xyz}.xyz")
+        print(f"Input File: {xyz}")
         print(f"D:          {d}")
         print(f"N Points:   {npoints}")
         print(f"Functional: {func}")
@@ -337,15 +341,16 @@ if __name__ == "__main__":
         if   d == 3:
             if charge != 0:
                     print(f"WARNING: A molecular charge of {charge} was set, but D3 is not sensitive to molecular charge")
-            if s9 == 1.0:
-                print("NOTE: Three-body term will be included in the D3 calculation")
-                subprocess.run([f"{PATHD} "
-                        f"{xyz} -func {func} -{damp} -anal -abc > "
-                        f"{dout}"], shell=True, check=True)
-            else:
-                subprocess.run([f"{PATHD} "
-                        f"{xyz} -func {func} -{damp} -anal> "
-                        f"{dout}"], shell=True, check=True)
+            # Grimme's code give weird errors with -abc flag
+            # if s9 == 1.0:
+            #     print("NOTE: Three-body term will be included in the D3 calculation")
+            #     subprocess.run([f"{PATHD} "
+            #             f"{xyz} -func {func} -{damp} -anal -abc > "
+            #             f"{dout}"], shell=True, check=True)
+            # else:
+            subprocess.run([f"{PATHD} "
+                    f"{xyz} -func {func} -{damp} -anal> "
+                    f"{dout}"], shell=True, check=True)
         elif d == 4:
             subprocess.run([f"{PATHD} "
                             f"-f {func} -c {charge} --pair-resolved "
