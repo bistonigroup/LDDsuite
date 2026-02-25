@@ -79,7 +79,7 @@ def read_xyzdisp(xyzdisp):
     if not os.path.exists(xyzdisp):
         raise FileNotFoundError(f"file '{xyzdisp}' not found")
     
-    print(f"INFO: Be sure atomic contributions in {xyzdisp} are in kcal/mol.")
+    print(f"\nINFO: Be sure atomic contributions in {xyzdisp} are in kcal/mol.")
     
     atoms   = []
     coords  = []
@@ -320,10 +320,10 @@ if __name__ == "__main__":
     else: # Only cube file required
         # Construct file names
         xyzdisp  = f"{basename}.atomwise.txt"
-        omegaout = f"{basename}.{npoints}.omega.cube"
+        omegaout = f"{basename}.omega.cube"
     
         # Settings summary  
-        print("--- Settings ---\n")
+        print("\n--- Settings ---\n")
         print(f"Input File: {xyzdisp}.atomwise.txt")
         print(f"N Points:   {args.npoints}")
         print(f"CPU:        {args.nprocs}")
@@ -333,6 +333,7 @@ if __name__ == "__main__":
         
         atwdisptot = np.sum(atwdisp)
         Esyskcal = None
+        print("")
         
     print("computing dispersion density...")   
     # we need coordinates in bohr
@@ -389,7 +390,7 @@ if __name__ == "__main__":
         fp.write(" ")
 
     # calculate integral of LD density function
-    omegaintegral = sum(omega) * xstep * ystep * zstep
+    omegaintegral = np.sum(omega) * xstep * ystep * zstep
     
     print("\n--- Results ---\n")
     if not args.onlycube or Esyskcal!=None:
