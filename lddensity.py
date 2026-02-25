@@ -408,7 +408,7 @@ if __name__ == "__main__":
     if not args.onlycube or Esyskcal!=None:
         print("Total Dispersion Energy:".ljust(40)  + f"{Esyskcal:10.1f} kcal/mol")
     print("Total atom-wise contribution:".ljust(40) + f"{atwdisptot:10.1f} kcal/mol")
-    print("Integral of Omega Function:".ljust(40)   + f"{omegaintegral:10.1f}")
+    print("Integral of Omega Function:".ljust(40)   + f"{omegaintegral:10.1f} kcal/mol")
     
 if not args.onlycube:
     print("\n--- References for this run ---")
