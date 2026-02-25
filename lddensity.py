@@ -157,21 +157,6 @@ def omega_comp(xmin, ymin, zmin, xstep, ystep, zstep, npoints, xyzcoord_au, atwd
                 omega[idx] = val * norm
                 
     return omega
-
-def output(omegaintegral, atwdisptot, Esyskcal=None):
-    """
-    Print results of the calculation.
-
-    Args:
-        Esyskcal (float): The total dispersion energy in kcal/mol.
-        omegaintegral (float): The integral of the London dispersion density function.
-        atwdisptot (float): The total atom-wise contribution to dispersion energy.
-
-    Returns:
-        None
-    """
-    
-
     
 def format_time(seconds):
     """
