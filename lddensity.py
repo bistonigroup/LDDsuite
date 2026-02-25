@@ -19,7 +19,6 @@ Input/Output:
 - Input  : a "{basename}.xyz" file as input is required (coordinates specified in Ångström).
 - Output : at the end of the calculation, three output files will be generated:
     - ".d{n}atomwise.txt" : a file where coordinates are accompanied by a column indicating the contribution to the London dispersion energy for each atom.
-    - ".d{n}out.txt"      : the original DFT-D3/DFT-D4 output (J. Chem. Phys. 132, 154104 (2010) DOI: 10.1063/1.3382344; J. Chem. Phys. 147, 034112 (2017) DOI: 10.1063/1.4993215).
     - ".d{n}omega.cube"   : a file containing volumetric data to easily visualize the atomic dispersion energy contributions.
 
 Usage   : python3 lddensity.py <basename> [--d {3,4}] [--npoints NPOINTS] [--func FUNC] [--damp DAMP] [--charge CHARGE] [--abc] [--nprocs NPROCS] 
@@ -172,10 +171,7 @@ def output(omegaintegral, atwdisptot, Esyskcal=None):
         None
     """
     
-    if not args.onlycube or Esyskcal!=None:
-        print("Total Dispersion Energy:".ljust(40) + f"{Esyskcal:10.1f} kcal/mol")
-    print("Total atom-wise contribution:".ljust(40) + f"{atwdisptot:10.1f} kcal/mol")
-    print("Integral of Omega Function:".ljust(40) + f"{omegaintegral:10.1f}")
+
     
 def format_time(seconds):
     """
@@ -269,7 +265,7 @@ if __name__ == "__main__":
         omegaout = f"{basename}.omega.cube"
        
         # Settings summary  
-        print("===SETTINGS SUMMARY===")
+        print("\n--- Settings ---\n")
         print(f"Input File: {xyz}")
         print(f"D:          {d}")
         print(f"N Points:   {npoints}")
@@ -279,7 +275,6 @@ if __name__ == "__main__":
         if d == 4:
             print(f"Charge:     {charge}")
         print(f"CPU:        {nproc}")
-        print("======================")
 
         # read input
         atoms, coords, natoms = read_xyz(xyz)
@@ -342,11 +337,10 @@ if __name__ == "__main__":
         omegaout = f"{basename}.{npoints}.omega.cube"
     
         # Settings summary  
-        print("===SETTINGS SUMMARY===")
+        print("--- Settings ---\n")
         print(f"Input File: {xyzdisp}.atomwise.txt")
         print(f"N Points:   {args.npoints}")
         print(f"CPU:        {args.nprocs}")
-        print("======================")
         
         # read input
         atoms, coords, natoms, atwdisp = read_xyzdisp(xyzdisp)
@@ -409,8 +403,27 @@ if __name__ == "__main__":
 
     # calculate integral of LD density function
     omegaintegral = sum(omega) * xstep * ystep * zstep
-    print("")
-    output(omegaintegral, atwdisptot, Esyskcal)
+    
+    print("\n--- Results ---\n")
+    if not args.onlycube or Esyskcal!=None:
+        print("Total Dispersion Energy:".ljust(40)  + f"{Esyskcal:10.1f} kcal/mol")
+    print("Total atom-wise contribution:".ljust(40) + f"{atwdisptot:10.1f} kcal/mol")
+    print("Integral of Omega Function:".ljust(40)   + f"{omegaintegral:10.1f}")
+    
+if not args.onlycube:
+    print("\n--- References for this run ---")
+    print("""
+ACS Cent. Sci. 2025, 11, 6, 890–898;
+J. Chem. Theory Comput. 2024, 20, 5, 1923–1931;""")
+    if d == 4:
+        print("""J. Chem. Phys., 2017, 147, 034112;
+J. Chem. Phys., 2019, 150, 154122;"""
+        )
+    else:
+        print("""J. Open Source Softw., 2024, 9(103), 7169;
+J. Chem. Phys., 2010, 132, 154104;
+""")
+    
 
 exetime = int(round(time.time() - start_time))
 print(f"\nexecution time: {format_time(exetime)} (hh:mm:ss)\n")

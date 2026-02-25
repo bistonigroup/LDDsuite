@@ -91,7 +91,7 @@ source venv/bin/activate
 ## 1. Generate Density Data
 First, run the Python script to perform ADLD and generate the volumetric data (e.g., a .cube file). Use the following command:
 ```bash
-python lddensity.py {basename}.xyz                   
+python lddensity.py {basename}                
 ```
 
 To see all available options and advanced settings, use the help flag:
