@@ -13,12 +13,7 @@ J. Chem. Theory Comput. 2024, 20, 5, 1923–1931
 Then generate a .cube file to visualize these contributions.
 
 Prerequisites:
-- Ensure the DFT-D3/DFT-D4 executable is available at at the specified path (in the current folder by default).
-  Download from
-  https://www.chemie.uni-bonn.de/grimme/de/software/dft-d3 or
-  https://www.chemie.uni-bonn.de/grimme/de/software/dft-d4
-- Python 3.x with standard libraries.
-- Please cite the related papers of Prof. Grimme and coworkers
+- Refer to requirements.txt
 
 Input/Output:
 - Input  : a "{basename}.xyz" file as input is required (coordinates specified in Ångström).
@@ -27,8 +22,8 @@ Input/Output:
     - ".d{n}out.txt"      : the original DFT-D3/DFT-D4 output (J. Chem. Phys. 132, 154104 (2010) DOI: 10.1063/1.3382344; J. Chem. Phys. 147, 034112 (2017) DOI: 10.1063/1.4993215).
     - ".d{n}omega.cube"   : a file containing volumetric data to easily visualize the atomic dispersion energy contributions.
 
-Usage   : python3 lddensity.py <basename> [--d {3,4}] [--npoints NPOINTS] [--func FUNC] [--damp DAMP] [--charge CHARGE] [--s9 S9] [--nprocs NPROCS] 
-Example : python3 lddensity.py water --d 4 --npoints 80 --func b3-lyp --damp bj --charge 0 --s9 1.0 --nprocs 2
+Usage   : python3 lddensity.py <basename> [--d {3,4}] [--npoints NPOINTS] [--func FUNC] [--damp DAMP] [--charge CHARGE] [--abc] [--nprocs NPROCS] 
+Example : python3 lddensity.py water --d 4 --npoints 80 --func b3-lyp --damp bj --charge 0 --abc --nprocs 2
           python3 lddensity.py water --d 3 --npoints 80 --func b3-lyp --damp bj --nprocs 2
           python3 lddensity.py water --onlycube --npoints 80 --nprocs 2
 
@@ -38,7 +33,7 @@ Arguments Explanation:
 - func     : Specifies the functional to be used in the calculation. Optional, defaults to 'b3-lyp'.
 - damp     : Specifies the damping function to be used in the calculation calculation. Optional, defaults to 'bj'.
 - charge   : The overall charge of the molecule (only D4). Optional, defaults to 0.
-- s9       : Coefficient for ATM (Axilrod-Teller-Muto) three-body dispersion. To eliminate the three-body contribution, set this to 0. Optional, defaults to 1.0. 
+- abc      : Include three-body contribution. Optional, defaults to False. 
 - nprocs   : The number of processors to use for parallel calculations. Optional, defaults to 1.
 - onlycube : Flag to generate only the .cube file and skip other outputs. Note that {basename}.atomwise.txt file is required.
 """
@@ -52,27 +47,21 @@ def read_xyz(xyz):
     
     Returns:
         atoms (list): A list containing the atomic symbols.
-        x (list): A list containing the x-coordinates of the atoms.
-        y (list): A list containing the y-coordinates of the atoms.
-        z (list): A list containing the z-coordinates of the atoms.
+        coords (np.ndarray float64): (N,3) array of atomic coordinates (in angstroem)
         nat (int): The number of atoms.
     """
-    atoms = []
-    x, y, z = [], [], []
+    if not os.path.exists(xyz):
+        raise FileNotFoundError(f"XYZ file '{xyz}' not found")
 
-    with open(xyz, 'r', encoding="utf-8") as fp:
-        next(fp)
-        next(fp)
-        for line in fp:
-            data = line.split()
-            atom = str(data[0]).capitalize()
-            atoms.append(atom)
-            x.append(float(data[1]))
-            y.append(float(data[2]))
-            z.append(float(data[3]))
-            nat = len(atoms)
-
-    return atoms, x, y, z, nat
+    with open(xyz, 'r') as fp:
+        lines = fp.readlines()
+    nat = int(lines[0])
+    atoms, coords = [], []
+    for line in lines[2:2+nat]:
+        el, x, y, z = line.split()
+        atoms.append(el.capitalize())
+        coords.append([float(x), float(y), float(z)])
+    return atoms, np.array(coords), nat
 
 def read_xyzdisp(xyzdisp):
     
@@ -80,112 +69,94 @@ def read_xyzdisp(xyzdisp):
     Reads geometric coordinates and the atomic contribution/dispersion
     
     Args:
-        xyz (str): The path of the .atomwise.txt file to read.
+        xyzdisp (str): The path of the .atomwise.txt file to read.
     
     Returns:
         atoms (list): A list containing the atomic symbols.
-        x (list): A list containing the x-coordinates of the atoms.
-        y (list): A list containing the y-coordinates of the atoms.
-        z (list): A list containing the z-coordinates of the atoms.
+        coords (np.ndarray float64): (N,3) array of atomic coordinates (in angstroem)
         nat (int): The number of atoms.
-        atwdisp (list): A list containing atomwise contributon/dispersion.
+        atwdisp (np.ndarray float64): (N) array containing atomwise contributon/dispersion.
     """
-    atoms = []
-    x, y, z = [], [], []
-    atwdisp = []
+    if not os.path.exists(xyzdisp):
+        raise FileNotFoundError(f"file '{xyzdisp}' not found")
     
     print(f"INFO: Be sure atomic contributions in {xyzdisp} are in kcal/mol.")
-
-    with open(xyzdisp, 'r', encoding='utf-8') as fp:
-        next(fp)
-        next(fp)
-        for line in fp:
-            data = line.split()
-            atom = str(data[0]).capitalize()
-            atoms.append(atom)
-            x.append(float(data[1]))
-            y.append(float(data[2]))
-            z.append(float(data[3]))
-            atwdisp.append(float(data[4]))
-            nat = len(atoms)
-
-    return atoms, x, y, z, nat, atwdisp
-
-def box_gen(xmin, ymin, zmin, xstep, ystep, zstep, npoints):
-    """
-    Generates a 3D grid of points for computing the London dispersion density function
     
-    Args:
-        xmin (float): Minimum x-coordinate of the grid.
-        ymin (float): Minimum y-coordinate of the grid.
-        zmin (float): Minimum z-coordinate of the grid.
-        xstep (float): Step size in the x-direction.
-        ystep (float): Step size in the y-direction.
-        zstep (float): Step size in the z-direction.
-        npoints (int): Number of points along each axis.
+    atoms   = []
+    coords  = []
+    atwdisp = []
         
-    Returns:
-        xyzbox (list): A list of 3D points in the grid.
-    """
-    xyzbox = []
-    for p in range(npoints):
-        xpt = xmin + p * xstep
-        for q in range(npoints):
-            ypt = ymin + q * ystep
-            for r in range(npoints):
-                zpt = zmin + r * zstep
-                xyzbox.append((xpt,ypt,zpt))
-    return xyzbox
+    with open(xyzdisp, 'r') as fp:
+            for line in fp:
+                parts = line.split()
+                if len(parts) == 5:
+                    try:
+                        el, x, y, z, atomdisp = parts
+                        atoms.append(el.capitalize())
+                        coords.append([float(x), float(y), float(z)])
+                        atwdisp.append(float(atomdisp))
+                    except ValueError:
+                        continue
+                    
+    nat = len(atoms)
+    
+    if nat == 0:
+        print(f"WARNING: No atomic data found in {xyzdisp}")
+        
+    return atoms, np.array(coords), nat, np.array(atwdisp)
 
-def omega_comp_wrapper(args):
+from numba import njit, prange
+@njit(parallel=True)
+def omega_comp(xmin, ymin, zmin, xstep, ystep, zstep, npoints, xyzcoord_au, atwdisp):
     """
-    Computes the London dispersion density at a single grid point
+    Computes the London dispersion density across a 3D grid in parallel.
+    To maximize efficiency, grid points are generated on-the-fly, avoiding 
+    the creation of large coordinate arrays and optimizing memory usage.
 
     Args:
-        args (tuple): A tuple containing the following:
-        - boxpt (list): XYZ coordinates of the point where omega is to be computed.
-        - xyzcoord_au (list): XYZ coordinates of atoms in atomic unit.
-        - atwdisp (list): List of atomic-wise dispersion.
-        
+    xmin            [float]      : minimum x-coordinate of the grid
+    ymin            [float]      : minimum y-coordinate of the grid
+    zmin            [float]      : minimum z-coordinate of the grid
+    xstep           [float]      : step size along the x-axis
+    ystep           [float]      : step size along the y-axis
+    zstep           [float]      : step size along the z-axis
+    npoints         [int]        : number of points along each axis
+    xyzcoord_au     [np.ndarray] : (N,3) array of atomic coordinates (in atomic units)
+    atwdisp         [np.ndarray] : length N array of atomic dispersion contributions
+
     Returns:
-        omegaval (float): The computed London dispersion density value.
+    omega           [np.ndarray] : 1D array of shape (npoints**3,) containing computed density values for cube file
     """
-    boxpt, xyzcoord_au, atwdisp = args
-    omegaval, ith = 0.0, 0
+    # initilization
+    omega = np.zeros(npoints**3)
+    
+    # constants
     a = 0.5
-    norm = (1.0 / (math.pi / a)) ** 1.5
-    for syspt in xyzcoord_au:
-        rbox_rith = (boxpt[0] - syspt[0]) ** 2 + \
-                    (boxpt[1] - syspt[1]) ** 2 + \
-                    (boxpt[2] - syspt[2]) ** 2
-        exp_norm = norm * math.exp(- a * rbox_rith)
-        ld_rbox_rith = atwdisp[ith] * exp_norm
-        omegaval += ld_rbox_rith
-        ith += 1
-    return omegaval
-
-def omega_comp(nproc, ANG_AU, xyzbox, x, y, z, atwdisp):
-    """
-    Compute the London dispersion density values across the entire grid in parallel
-
-    Args:
-        nproc (int): The number of processors to use for parallel calculations.
-        ANG_AU (float): The conversion factor from angstroems to atomic units.
-        xyzbox (list): A list of 3D grid points for computing the omega function.
-        x (list): A list containing the x-coordinates of atoms in angstroems.
-        y (list): A list containing the y-coordinates of atoms in angstroems.
-        z (list): A list containing the z-coordinates of atoms in angstroems.
-        atwdisp (list): List of atomic-wise dispersion.
-
-    Returns:
-        omega (list): A list containing the computed London dispersion density values for each grid point.
-    """
-    xyzcoord_au = [[x[i] * ANG_AU, y[i] * ANG_AU, z[i] * ANG_AU]  for i in range(len(x))]
-
-    with Pool(nproc) as pool:
-        args = [(boxpt, xyzcoord_au, atwdisp) for boxpt in xyzbox]
-        results = pool.map(omega_comp_wrapper, args)
-    omega = results
+    norm = (a / np.pi) ** 1.5
+    
+    # disp density calculation while we create the cube box
+    
+    for ix in prange(npoints):  # prange is for numba
+        vx = xmin + ix * xstep
+        for iy in range(npoints):
+            vy = ymin + iy * ystep
+            for iz in range(npoints):
+                vz = zmin + iz * zstep
+                
+                # unique index for each point
+                idx = ix * (npoints**2) + iy * npoints + iz
+                
+                # dispersion density calculation
+                val = 0.0
+                for j in range(xyzcoord_au.shape[0]):
+                    dx = vx - xyzcoord_au[j, 0]
+                    dy = vy - xyzcoord_au[j, 1]
+                    dz = vz - xyzcoord_au[j, 2]
+                    r2 = dx*dx + dy*dy + dz*dz
+                    val += atwdisp[j] * np.exp(-a * r2)
+                
+                omega[idx] = val * norm
+                
     return omega
 
 def output(omegaintegral, atwdisptot, Esyskcal=None):
@@ -201,7 +172,7 @@ def output(omegaintegral, atwdisptot, Esyskcal=None):
         None
     """
     
-    if not args.onlycube:
+    if not args.onlycube or Esyskcal!=None:
         print("Total Dispersion Energy:".ljust(40) + f"{Esyskcal:10.1f} kcal/mol")
     print("Total atom-wise contribution:".ljust(40) + f"{atwdisptot:10.1f} kcal/mol")
     print("Integral of Omega Function:".ljust(40) + f"{omegaintegral:10.1f}")
@@ -224,21 +195,16 @@ def format_time(seconds):
     return f"{hours:02d}:{minutes:02d}:{secs:02d}"
 
 if __name__ == "__main__":
-    import os
-    import subprocess
-    from multiprocessing import Pool
-    import sys
+    
     import time
-    import math
     import argparse
-    import numpy as np
 
     start_time = time.time()
 
     # Define constants for unit conversion
-    ANG_AU = 1.0/0.5291772083
-    AU_ANG = 0.5291772083
-    AU_KCALMOL = 627.5096080305927
+    ANG_AU     = 1.889725989
+    AU_ANG     = 0.5291772083
+    AU_KCALMOL = 627.509474
 
     elements = [None,
          "H", "He",
@@ -265,12 +231,14 @@ if __name__ == "__main__":
     parser.add_argument('--func',    type=str,   default='b3-lyp', help='Functional to be used in the calculation (default: b3-lyp)')
     parser.add_argument('--damp',    type=str,   default='bj',     help='Damping function to be used in calculation (default: bj)')
     parser.add_argument('--charge',  type=int,   default=0,        help='Molecule charge for D4 (default: 0)')
-    parser.add_argument('--s9',      type=float, default=0,        help='Coefficient for ATM three-body dispersion for D4 (default: 0). Set 1 or 0 to include or not the three-body contribution.')
+    parser.add_argument('--abc',     action='store_true',          help='Compute three-body interactions')
     parser.add_argument('--nprocs',  type=int,   default=1,        help='Number of processors for parallel calculations (default: 1)')
-    
     parser.add_argument('--onlycube', action='store_true', help='If set, generate only the .cube file. Note that {basename}.atomwise.txt is the input file in this case.')
     
     args = parser.parse_args()
+    
+    import os
+    import numpy as np
 
     # Extract arguments into variables
     basename = args.basename
@@ -280,37 +248,26 @@ if __name__ == "__main__":
     damp     = args.damp
     nproc    = args.nprocs
     charge   = args.charge
-    s9       = args.s9
-    
-    # set three-body calculation
-    if s9 == 0:
-        abc = False
-    else:
-        abc = True
-    # if d == 3 and (0.0 < s9 < 1.0):
-    #     print(f"WARNING: Requested D3 with a fractional s9. Three-body calculation will not be performed.")
-    #     abc = False
-    
-    if d == 3 and s9 != 0:
-        print(f"WARNING: Three-body calculation is not yet supported for D3.")
-        abc = False
-    
+    abc      = args.abc
+       
     if d == 4 and damp != "bj":
         print("WARNING: damping function for D4 must be Becke-Johnson. Setting damp as 'bj'")
         damp = 'bj'
+        
+    if (args.d == 3):
+        import dftd3.interface as d3
+        if (func == "b3-lyp"):
+            func = "b3lyp"
+    elif (args.d == 4):
+        import dftd4.interface as d4
 
     if not args.onlycube:
                
         # Construct file names
         xyz      = f"{basename}.xyz"
-        atw      = f"{basename}.{npoints}.{func}.{damp}.d{d}atomwise.txt"
-        dout     = f"{basename}.{npoints}.{func}.{damp}.d{d}out.txt"
-        omegaout = f"{basename}.{npoints}.{func}.{damp}.d{d}omega.cube"
-
-        # Input check
-        if not os.path.isfile(xyz):
-            sys.exit("ERROR: could not find the .xyz file")
-        
+        atw      = f"{basename}.atomwise.txt"
+        omegaout = f"{basename}.omega.cube"
+       
         # Settings summary  
         print("===SETTINGS SUMMARY===")
         print(f"Input File: {xyz}")
@@ -325,101 +282,64 @@ if __name__ == "__main__":
         print("======================")
 
         # read input
-        atoms, x, y, z, natoms = read_xyz(xyz)
-
-        # Set path
-        if   d == 3:
-            PATHD = "./dftd3"
-        elif d == 4:
-            PATHD = "./dftd4"
-        
-        # Check if path exists
-        if not os.path.exists(PATHD):
-            sys.exit(f"ERROR: directory not valid. Please make sure DFT-D binary is placed in '{PATHD}'.")
+        atoms, coords, natoms = read_xyz(xyz)
             
         # Compute dispersion
-        if   d == 3:
-            if charge != 0:
-                    print(f"WARNING: A molecular charge of {charge} was set, but D3 is not sensitive to molecular charge")
-            # Grimme's code give weird errors with -abc flag
-            # if s9 == 1.0:
-            #     print("NOTE: Three-body term will be included in the D3 calculation")
-            #     subprocess.run([f"{PATHD} "
-            #             f"{xyz} -func {func} -{damp} -anal -abc > "
-            #             f"{dout}"], shell=True, check=True)
-            # else:
-            subprocess.run([f"{PATHD} "
-                    f"{xyz} -func {func} -{damp} -anal> "
-                    f"{dout}"], shell=True, check=True)
-        elif d == 4:
-            subprocess.run([f"{PATHD} "
-                            f"-f {func} -c {charge} --pair-resolved "
-                            f"--property --noedisp --mbdscale {s9} {xyz} "
-                            f"> {dout}"], shell=True, check=True)
+        numbers = np.array([elements.index(a) for a in atoms], dtype=int)
+        
+        if (args.d == 3):
+            if   damp == "bj":
+                param = d3.RationalDampingParam(method=func, atm=abc)
+            elif damp == "zero":
+                param = d3.ZeroDampingParam(method=func, atm=abc)
+            elif damp == "bjm":
+                param = d3.ModifiedRationalDampingParam(method=func, atm=abc)
+            elif damp == "zerom":
+                param = d3.ModifiedZeroDampingParam(method=func, atm=abc)
+            else:
+                raise ValueError(f"Unknown damping method: {damp}")
+            model = d3.DispersionModel(numbers, coords/AU_ANG)
+        elif (args.d == 4):
+                param = d4.DampingParam(method=func, atm=abc)
+                model = d4.DispersionModel(numbers, coords/AU_ANG, charge=charge)
+            
+            
+        pair = model.get_pairwise_dispersion(param)
+        E2   = pair["additive pairwise energy"]
+        
+        atwdisp  = np.zeros(natoms)
+        atwdisp += np.sum(E2, axis=1)
+        
+        if (abc):
+            E3       = pair["non-additive pairwise energy"]
+            atwdisp += np.sum(E3, axis=1)
+            
+        atwdisp *= AU_KCALMOL
+        Esyskcal = np.sum(atwdisp)
 
-
-        with open(f"{dout}", "r", encoding="utf-8") as drealsys:
-            drs = drealsys.readlines()
-            # generate list to store pairwise terms:
-            atwdisp = [0.000000] * natoms
-            if d == 3:
-                # calculate the total number of possible pairs
-                COMBO = int(natoms * (natoms - 1) / 2)
-
-                for j, line in enumerate(drs):
-                    if 'Edisp /kcal,au:' in line:
-                        erealsys = line.strip().split()
-                        Esyskcal = float(erealsys[2])
-                        Esysau = float(erealsys[3])
-
-                    if 'analysis of pair-wise terms (in kcal/mol)' in line:
-                        for l in range(j + 2, j + 2 + COMBO):
-                            epair = drs[l].strip().split()
-                            if len(epair) >= 9:
-                                iat, jat, eij = int(epair[0]), int(epair[1]), float(epair[-1])
-                                atwdisp[iat - 1] += eij / 2.00000
-                                atwdisp[jat - 1] += eij / 2.00000
-                            else:
-                                break
-            elif d == 4:
-                # calculate the total number of possible pairs
-                COMBO = int(natoms * natoms)
-                
-                for j, line in enumerate(drs):
-                    if 'Dispersion energy:' in line:
-                        erealsys = line.strip().split()
-                        Esyseh = float(erealsys[-2])
-                        Esyskcal = Esyseh * AU_KCALMOL
-
-                    if 'Pairwise representation of dispersion (in kcal/mol):' in line:
-                        for l in range(j + 4, (j + 4 + COMBO)):
-                            epair = drs[l].strip().split()
-                            if len(epair) >= 11:
-                                iat, jat, eij = int(epair[0]), int(epair[3]), float(epair[-1])
-                                atwdisp[iat - 1] += eij / 2.00000
-                                atwdisp[jat - 1] += eij / 2.00000
-                            else:
-                                break
-
+        # E2 has the following shape for water molecule:
+        # E2: 
+        #            O                H              H
+        # O  [[ 0.00000000e+00 -2.98587192e-07 -2.98570820e-07]
+        # H  [-2.98587192e-07   0.00000000e+00 -5.04702069e-06]
+        # H  [-2.98570820e-07  -5.04702069e-06  0.00000000e+00]]
+        
+        # it is the same for three-body contributons (E3)
 
         # Generate the .d{n}atomwise.txt file where the atomic contributions are listed
         atwdisptot = 0
-        with open(f"{atw}", "w", encoding="utf-8") as pwout:
+        with open(f"{atw}", "w") as pwout:
             pwout.write("analysis of atom-wise contributions (in kcal/mol)\n")
             pwout.write("          X            Y           Z         Edisp\n")
             for el, atwdisp_value in enumerate(atwdisp):
-                pwout.write(f"{atoms[el]} {x[el]:12.6f} {y[el]:12.6f}"
-                            f"{z[el]:12.6f}{atwdisp_value:12.6f}\n")
+                pwout.write(f"{atoms[el]} {coords[el,0]:12.6f} {coords[el,1]:12.6f}"
+                            f"{coords[el,2]:12.6f}{atwdisp_value:12.6f}\n")
                 atwdisptot += atwdisp_value
 
     else: # Only cube file required
         # Construct file names
         xyzdisp  = f"{basename}.atomwise.txt"
         omegaout = f"{basename}.{npoints}.omega.cube"
-        
-        # Input check
-        if not os.path.isfile(xyzdisp):
-            sys.exit("ERROR: could not find {basename}.atomwise.txt file")
     
         # Settings summary  
         print("===SETTINGS SUMMARY===")
@@ -429,66 +349,62 @@ if __name__ == "__main__":
         print("======================")
         
         # read input
-        atoms, x, y, z, natoms, atwdisp = read_xyzdisp(xyzdisp)
+        atoms, coords, natoms, atwdisp = read_xyzdisp(xyzdisp)
         
         atwdisptot = np.sum(atwdisp)
         Esyskcal = None
         
-    EXTENT = 7.0
-    xmin = min(x) * ANG_AU - EXTENT
-    xmax = max(x) * ANG_AU + EXTENT
-    ymin = min(y) * ANG_AU - EXTENT
-    ymax = max(y) * ANG_AU + EXTENT
-    zmin = min(z) * ANG_AU - EXTENT
-    zmax = max(z) * ANG_AU + EXTENT
+    # we need coordinates in bohr
+    coords = coords * ANG_AU
     
-    # Generate the .d{n}omega.cube file to visualize the London dispersion density
-    with open(f"{omegaout}", "w", encoding="utf-8") as fp:
-
+    # define the grid boundaries. An extra padding (EXTENT) is added
+    EXTENT = 7.0
+    xmin, ymin, zmin = np.min(coords, axis=0) - EXTENT
+    xmax, ymax, zmax = np.max(coords, axis=0) + EXTENT
+    
+    # compute step sizes along each axis
+    xstep = (xmax - xmin) / float(npoints - 1)
+    ystep = (ymax - ymin) / float(npoints - 1)
+    zstep = (zmax - zmin) / float(npoints - 1)
+    
+    with open(omegaout, "w") as fp:
+        # header
         fp.write(f"LD density ({npoints} grid points)\n")
-        if not args.onlycube:
-            if d == 3:
-                fp.write(f"input file: {basename}.xyz ({func} {damp}, E(3)={abc})\n")
-            elif d == 4:
-                fp.write(f"input file: {basename}.xyz ({func} bj, charge={charge}, s9={s9})\n")
-        else:
-            fp.write(f"input file: {basename}.atomwise.txt\n")
+        fp.write(f"input file: {basename}.xyz ({func} {damp}, E(3)={abc})\n")
         fp.write(f"{len(atoms):5d}{xmin:12.6f}{ymin:12.6f}{zmin:12.6f}\n")
-
-        # calculate step sizes for each dimension
-        xstep = (xmax - xmin) / float(npoints - 1)
         fp.write(f"{npoints:5d}{xstep:12.6f}{0:12.6f}{0:12.6f}\n")
-        ystep = (ymax - ymin) / float(npoints - 1)
         fp.write(f"{npoints:5d}{0:12.6f}{ystep:12.6f}{0:12.6f}\n")
-        zstep = (zmax - zmin) / float(npoints - 1)
         fp.write(f"{npoints:5d}{0:12.6f}{0:12.6f}{zstep:12.6f}\n")
 
-        # write the atomic number, nuclear charge and the corresponding coordinates for each atom
+        # list of atoms in the header
         for i, atom in enumerate(atoms):
             index = elements.index(atom)
-            xi, yi, zi = x[i] * ANG_AU, y[i] * ANG_AU, z[i] * ANG_AU
+            xi, yi, zi = coords[i]
             fp.write(f"{index:5d}{index:12.6f}{xi:12.6f}{yi:12.6f}{zi:12.6f}\n")
 
-        xyzbox = box_gen(xmin, ymin, zmin, xstep, ystep, zstep, npoints)
-
-        omega = omega_comp(nproc, ANG_AU, xyzbox, x, y, z, atwdisp)
-        
-        m = 0
+        omega = omega_comp(
+            xmin, ymin, zmin, xstep, ystep, zstep, 
+            npoints, coords, atwdisp
+        )
+                    
+        # body
+        text = []
         n = 0
         num = 0
         for ix in range(npoints):
             for iy in range(npoints):
                 for iz in range(npoints):
-                    fp.write(f"{omega[num]:14.5e}")
-                    m += 1
+                    text.append(f"{omega[num]:14.5e}")
                     n += 1
                     num += 1
                     if n > 5:
-                        fp.write("\n")
+                        text.append("\n")
                         n = 0
                 if n != 0:
-                    fp.write("\n")
+                    text.append("\n")
                     n = 0
+            fp.write("".join(text))
+            text = []
         fp.write(" ")
 
     # calculate integral of LD density function
