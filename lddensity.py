@@ -265,6 +265,7 @@ if __name__ == "__main__":
         atoms, coords, natoms = read_xyz(xyz)
             
         # Compute dispersion
+        print("\ncomputing dispersion...")
         numbers = np.array([elements.index(a) for a in atoms], dtype=int)
         
         if (args.d == 3):
@@ -333,6 +334,7 @@ if __name__ == "__main__":
         atwdisptot = np.sum(atwdisp)
         Esyskcal = None
         
+    print("computing dispersion density...")   
     # we need coordinates in bohr
     coords = coords * ANG_AU
     
