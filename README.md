@@ -89,10 +89,13 @@ source venv/bin/activate
 # Basic Usage
 
 ## 1. Generate Density Data
-First, run the Python script to perform ADLD and generate the volumetric data (e.g., a .cube file). Use the following command:
+First, run the Python script to perform ADLD and generate the volumetric data (i.e., the `.cube` file). Use the following command:
 ```bash
 python lddensity.py {basename}                
 ```
+
+> [!NOTE] 
+> `{basename}` is the filename without any extension. For example, if your input file is `water.xyz`, `{basename}` is `water`.
 
 To see all available options and advanced settings, use the help flag:
 ```bash
@@ -115,7 +118,7 @@ vmd -e vmd.tcl
 > Auto color scaling is enabled by default.
 
 > [!TIP]
-> For better visualization, set `autoscale` to `1` and choose symmetric values for `colorscale_min` and `colorscale_max`.
+> For better visualization, set `autoscale` to `1` and choose symmetric values for `colorscale_min` and `colorscale_max` (e.g., colorscale_min = X and  colorscale_max = -X).
 
 # Requirements
 - Refer to `requirements.txt` for Python script.
@@ -138,12 +141,12 @@ Below is a detailed table of the arguments that can be used with our script. Eac
 | **onlycube**  | Generates only the `.cube` file. See [Generate Only the Cube File](#generate-only-the-cube-file) section | Yes | False |
 
 # Generate Only the Cube File
-If you have already computed the atomic contributions (for example using another software), or if you want to plot the **dispersion density difference function**, you can use the `--onlycube` flag in `lddensity.py`.  
+If you have already calculated the atomic contributions (e.g., using [ORCA](https://www.faccts.de/docs/orca/6.1/manual/contents/spectroscopyproperties/led.html?q=ADLD&n=1#atomic-decomposition-of-london-dispersion-energy-adld-led)) or if you wish to plot the dispersion density difference function, you can use the `--onlycube` flag in lddensity.py.
 
-In this case, the input file is **NOT** a standard `.xyz`, but rather an `.xyz` file with an extra column containing the atomic dispersion contributions in kcal/mol.  
-The file must be named `{basename}.atomwise.txt`, which corresponds to the file produced by `lddensity.py` when the `--onlycube` flag is **NOT** used.
+In this case, the input file is **not** a standard `.xyz` file. Instead, it is a formatted text file containing an extra column for the atomic dispersion contributions (in kcal/mol).
+The script expects a file named `{basename}.atomwise.txt`, which is the same format produced by lddensity.py when the `--onlycube` flag is **not** used.
 
-An example of `.atomwise.txt` file for the $C_6H_6–Li$ system is:
+An example of `.atomwise.txt` file for the $C_6H_6–Li$ system is shown below:
 
 ```
 #
@@ -163,8 +166,17 @@ H       1.044500    -0.780664   -0.258085   -0.486850
 Li     -1.018560     0.350445    2.545363   -3.707400
 ```
 
+To run the script, use the following command:
+```bash
+python lddensity.py {basename} --onlycube            
+```
+
+> [!NOTE] 
+> `{basename}` is the filename without any extension. For example, if your input file is `benzene.atomwise.txt`, `{basename}` is `benzene`
+
+
 # Dispersion Density Difference
-To generate the **dispersion density difference** between two molecular systems:  
+To generate the dispersion density difference between two molecular systems:  
 
 1. Compute the atomic dispersion contributions for both systems separately.  
 2. Be sure there's an atom-to-atom mapping between the two structures. 
@@ -176,7 +188,7 @@ This procedure allows you to visualize the difference between atomic LD contribu
 An example command could be:
 
 ```bash
-python3 lddensity.py system_diff --onlycube --npoints 80 --nprocs 2
+python lddensity.py system_diff --onlycube --npoints 80 --nprocs 2
 ```
 
 # Renderings
