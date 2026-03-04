@@ -324,7 +324,7 @@ if __name__ == "__main__":
     
         # Settings summary  
         print("\n--- Settings ---\n")
-        print(f"Input File: {xyzdisp}.atomwise.txt")
+        print(f"Input File: {xyzdisp}")
         print(f"N Points:   {args.npoints}")
         print(f"CPU:        {args.nprocs}")
         
